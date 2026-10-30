@@ -86,7 +86,7 @@ Requer **Python 3.10 ou superior**.
 
 ```bash
 # 1. Clonar o repositório e entrar no diretório
-git clone <URL-DO-SEU-REPOSITORIO>   # substituir pela URL real após a publicação
+git clone https://github.com/Lucas-715/Federated-XAI-Lab.git
 cd Federated-XAI-Lab
 
 # 2. Criar e ativar o ambiente virtual
