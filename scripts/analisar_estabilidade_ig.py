@@ -5,9 +5,18 @@ Avalia a robustez dos rankings Top-5 em relacao a quantidade de passos de integr
 Exporta:
   - results/estabilidade_ig_passos.csv (180 comparacoes pareadas)
   - results/resumo_estabilidade_ig_passos.csv (medias agregadas por cenario e metodo)
+  - results/resumo_estabilidade_ig_global.csv (indicadores globais com e sem duplicacoes)
+
+Observacao metodologica: em cada semente, os quatro checkpoints '*_centralizado.pt' possuem
+parametros identicos (o baseline centralizado e treinado uma unica vez e salvo sob quatro nomes).
+Portanto os 60 arquivos correspondem a 45 conjuntos distintos de parametros e as 180 comparacoes
+contem repeticoes; a coluna 'duplicate_reference' marca as copias redundantes e o resumo global
+reporta os indicadores tambem sem elas (135 comparacoes). As comparacoes NAO sao experimentos
+estatisticamente independentes (reutilizam modelos, sementes e amostras).
 """
 import os
 import json
+import hashlib
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -55,6 +64,7 @@ def run_stability_analysis():
         )
         X = data.X_test[strat_idx]
         y = data.y_test[strat_idx]
+        seen_params = set()  # hashes de parametros ja avaliados nesta semente
         
         for ckpt_file in sorted(ckpt_dir.glob("*.pt")):
             ckpt_name = ckpt_file.name
@@ -64,8 +74,16 @@ def run_stability_analysis():
             sc = sc_map.get(sc_part, sc_part)
             
             model = new_model(561, 6, seed=seed)
-            model.load_state_dict(torch.load(ckpt_file, map_location="cpu", weights_only=True))
+            state = torch.load(ckpt_file, map_location="cpu", weights_only=True)
+            model.load_state_dict(state)
             model.eval()
+
+            # Identifica parametros identicos (ex.: copias do baseline centralizado)
+            params_sha = hashlib.sha256(
+                b"".join(state[k].numpy().tobytes() for k in sorted(state))
+            ).hexdigest()
+            duplicate_reference = params_sha in seen_params
+            seen_params.add(params_sha)
             
             # Atribuições e rankings em 16, 32 e 64 passos
             t16, _ = summarize_explanations(model, X, data.features, steps=16, target_class=y)
@@ -101,6 +119,8 @@ def run_stability_analysis():
                     'scenario': sc,
                     'method': method,
                     'checkpoint': ckpt_name,
+                    'params_sha256': params_sha[:16],
+                    'duplicate_reference': duplicate_reference,
                     'steps_a': sa,
                     'steps_b': sb,
                     'jaccard_top5': j,
@@ -128,12 +148,33 @@ def run_stability_analysis():
     summary.to_csv(out_summary, index=False, encoding="utf-8")
     print(f"Resumo agregado exportado para: {out_summary}")
     
+    # Indicadores globais com e sem duplicacoes da referencia centralizada
+    def _global_row(label, d):
+        return {
+            'conjunto': label,
+            'n_conjuntos_distintos_de_parametros': d.groupby('seed')['params_sha256'].nunique().sum(),
+            'n_comparacoes': len(d),
+            'jaccard_top5_medio': d['jaccard_top5'].mean(),
+            'jaccard_top5_dp_amostral': d['jaccard_top5'].std(ddof=1),
+            'jaccard_top5_min': d['jaccard_top5'].min(),
+            'n_jaccard_igual_1': int((d['jaccard_top5'] == 1.0).sum()),
+            'n_ordem_identica': int(d['exact_order_match_top5'].sum()),
+        }
+
+    df_unique = df[~df['duplicate_reference']]
+    global_summary = pd.DataFrame([
+        _global_row('todos os arquivos de checkpoint', df),
+        _global_row('sem duplicacoes da referencia centralizada', df_unique),
+    ])
+    out_global = results_dir / "resumo_estabilidade_ig_global.csv"
+    global_summary.to_csv(out_global, index=False, encoding="utf-8")
+    print(f"Resumo global exportado para: {out_global}")
+
     print("\n=== RESUMO GERAL DE ESTABILIDADE DOS RANKINGS TOP-5 ===")
-    print(f"Total de comparações executadas: {len(df)}")
-    print(f"Média Geral Jaccard Top-5:       {df['jaccard_top5'].mean():.4f} (DP: {df['jaccard_top5'].std(ddof=1):.4f})")
-    print(f"Menor Jaccard observado:         {df['jaccard_top5'].min():.4f}")
-    print(f"Taxa de Jaccard = 1.000:         {(df['jaccard_top5'] == 1.0).mean()*100:.2f}% ({(df['jaccard_top5'] == 1.0).sum()}/{len(df)})")
-    print(f"Taxa de Ordem 100% Idêntica:     {df['exact_order_match_top5'].mean()*100:.2f}% ({df['exact_order_match_top5'].sum()}/{len(df)})")
+    for _, r in global_summary.iterrows():
+        print(f"[{r['conjunto']}] conjuntos distintos={r['n_conjuntos_distintos_de_parametros']} comparacoes={r['n_comparacoes']}")
+        print(f"   Jaccard medio={r['jaccard_top5_medio']:.4f} (DP={r['jaccard_top5_dp_amostral']:.4f}), minimo={r['jaccard_top5_min']:.4f}")
+        print(f"   Jaccard=1,000: {r['n_jaccard_igual_1']}/{r['n_comparacoes']} | ordem identica: {r['n_ordem_identica']}/{r['n_comparacoes']}")
     
     return df, summary
 

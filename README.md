@@ -46,6 +46,8 @@ Federated-XAI-Lab/
 │       ├── analisar_cenarios.py           # Analise estatistica e visual da heterogeneidade (TVD, Entropia)
 │       ├── analisar_experimentos_reais.py   # Consolidacao multissemente e testes pareados
 │       ├── recalcular_xai_checkpoints.py   # Recalculo de XAI controlado sobre os 60 checkpoints
+│       ├── analisar_estabilidade_ig.py    # Estabilidade dos rankings Top-5 (16/32/64 passos)
+│       ├── download_ucihar.py             # Download do UCI HAR com verificacao SHA-256 / estrutural
 │       └── consolidar_execucoes.py
 ├── results/
 │       ├── uci_seed_42/                   # Execucao completa semente 42 (checkpoints, XAI, metricas)
@@ -57,6 +59,9 @@ Federated-XAI-Lab/
 │       ├── resumo_concordancia_top5_real.csv # Concordancia Top-5 (classe prevista e controlada)
 │       ├── resumo_concordancia_entre_clientes_real.csv # Jaccard inter-clientes
 │       ├── teste_estatistico_pareado.json # Testes t pareados e Wilcoxon
+│       ├── estabilidade_ig_passos.csv     # 180 comparacoes de estabilidade (com coluna duplicate_reference)
+│       ├── resumo_estabilidade_ig_passos.csv # Estabilidade por cenario e metodo
+│       ├── resumo_estabilidade_ig_global.csv # Indicadores globais (180 vs 135 comparacoes)
 │       └── fig_resumo_macro_f1_real.png   # Grafico publicavel com barras de erro
 ├── docs/
 │       ├── RELATORIO_AUDITORIA.md         # Relatorio formal de auditoria
@@ -77,7 +82,7 @@ Requer **Python 3.10 ou superior**.
 
 ```bash
 # 1. Clonar o repositório e entrar no diretório
-git clone https://github.com/SEU-USUARIO/Federated-XAI-Lab.git
+git clone <URL-DO-SEU-REPOSITORIO>   # substituir pela URL real após a publicação
 cd Federated-XAI-Lab
 
 # 2. Criar e ativar o ambiente virtual
@@ -94,7 +99,14 @@ pip install pytest
 
 # 4. Obter o dataset oficial UCI HAR (não incluído no ZIP por restrição de tamanho):
 python scripts/download_ucihar.py
-# (O script baixa e descompacta automaticamente os dados oficiais em data/UCI HAR Dataset)
+# (O script baixa e descompacta os dados em data/UCI HAR Dataset.)
+# Dois níveis de verificação:
+#   - Download: compara o SHA-256 do ZIP interno com o hash configurado no script.
+#     Esse hash foi observado no arquivo obtido pelos autores e NÃO foi confirmado
+#     em uma referência externa independente.
+#   - Dados já extraídos: apenas verificação ESTRUTURAL (8 arquivos essenciais e
+#     tamanho mínimo), sem verificação criptográfica.
+# Use `python scripts/download_ucihar.py --strict` para exigir a verificação SHA-256.
 ```
 
 ---
@@ -146,7 +158,7 @@ python scripts/analisar_experimentos_reais.py
 - **Desambiguação de Atributos:** Todas as 561 posições de características possuem identificadores posicionalmente únicos (`idx 0` a `idx 560`), eliminando qualquer risco de colisão entre os 42 nomes triplicados do UCI HAR (como `tGravityAcc-energy()-X`, identificado exclusivamente como `idx 56`).
 - **Concordância Inter-Clientes (Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607 $\pm$ 0,177**. Sob heterogeneidade, a concordância média recua para **0,159 $\pm$ 0,084** (Moderado) e **0,157 $\pm$ 0,070** (Severo), refletindo empiricamente a especialização dos dados de treino em subconjuntos restritos de classes combinada com a forte assimetria no volume amostral entre clientes no particionamento Dirichlet severo (e.g. de 11 a 2.572 amostras na semente 43, onde a amostragem de até 25 instâncias locais amplia a variância nos clientes menores).
 - **Validação Axiomática Multi-Passo:** Verificação quantitativa do Axioma da Completude ($\sum IG_i \approx F(x) - F(0)$) avaliando o conjunto completo das 120 amostras de teste estratificadas (todas as 6 classes de atividade representadas). O erro relativo médio de completude situou-se confortavelmente abaixo de 1% em todas as cinco sementes já a partir de 16 passos (média geral de **0,557%** a 16 passos, **0,382%** a 32 passos e **0,238%** a 64 passos, com 100% das sementes mantendo média abaixo do limiar de 1% em todas as escalas avaliadas). O limiar aplica-se à média amostral, ocorrendo flutuações locais em instâncias isoladas limítrofes devido a descontinuidades de derivada em redes ReLU.
-- **Estabilidade dos Rankings Top-5:** A auditoria exaustiva em todos os 60 checkpoints treinados (180 comparações pareadas registradas em `results/estabilidade_ig_passos.csv` e geradas via `python scripts/analisar_estabilidade_ig.py`) comprovou média geral de Jaccard Top-5 de **$0,9963 \pm 0,0350$** entre 16, 32 e 64 passos, com **$97,78\%$ de concordância exata na ordem posicional do 1º ao 5º atributo**, confirmando que a seleção de atributos dominantes é empiricamente invariante à resolução de passos adotada.
+- **Estabilidade dos Rankings Top-5:** Nas configurações avaliadas (16, 32 e 64 passos, 120 amostras estratificadas), os rankings Top-5 foram **altamente estáveis**, mas não invariantes. Os 60 arquivos de checkpoint correspondem a **45 conjuntos distintos de parâmetros** (os quatro `*_centralizado.pt` de cada semente são idênticos). Com todos os arquivos, foram 180 comparações: Jaccard médio $0,9963 \pm 0,0350$, conjunto idêntico em 178/180 e ordem idêntica em 176/180. Sem as duplicações do baseline centralizado, são 135 comparações: Jaccard médio $0,9951$, conjunto idêntico em 133/135 e ordem idêntica em 131/135. As quatro divergências ocorrem no cenário Participantes naturais (semente 44, FedAvg: ordem diferente com mesmo conjunto; semente 45, FedProx: Jaccard 0,667). As comparações reutilizam modelos, sementes e amostras e **não são experimentos estatisticamente independentes**. Detalhes em `results/estabilidade_ig_passos.csv` e `results/resumo_estabilidade_ig_global.csv` (gerados por `python scripts/analisar_estabilidade_ig.py`).
 
 ---
 

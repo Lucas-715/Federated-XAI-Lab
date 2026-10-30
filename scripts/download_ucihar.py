@@ -1,4 +1,17 @@
-"""Script utilitário para download, verificação criptográfica (SHA-256) e extração do UCI HAR Dataset."""
+"""Download e extracao do UCI HAR Dataset, com dois niveis de verificacao distintos.
+
+1. Verificacao CRIPTOGRAFICA (SHA-256): aplicada somente ao arquivo 'UCI HAR Dataset.zip'
+   obtido durante o download. Se o pacote baixado nao contiver esse ZIP interno, o script
+   NAO consegue verificar o hash e emite um AVISO explicito (ver `verify_hash`).
+2. Verificacao ESTRUTURAL: presenca e tamanho minimo de 8 arquivos obrigatorios. Esta e a
+   unica verificacao aplicada a dados ja extraidos em disco; ela NAO prova integridade
+   dos bytes, apenas que a arvore de arquivos esta completa.
+
+Sobre o hash de referencia: o valor abaixo foi obtido do arquivo 'UCI HAR Dataset.zip'
+baixado do repositorio da UCI durante este projeto (60.999.314 bytes). Nao foi confirmado
+em uma segunda fonte independente; confira-o contra uma referencia confiavel antes de
+usa-lo como garantia de autenticidade.
+"""
 import os
 import sys
 import zipfile
@@ -7,7 +20,8 @@ import hashlib
 from pathlib import Path
 
 UCI_URL = "https://archive.ics.uci.edu/static/public/240/human+activity+recognition+using+smartphones.zip"
-# Hash SHA-256 oficial do arquivo interno 'UCI HAR Dataset.zip' (60.999.314 bytes)
+# SHA-256 observado para o arquivo interno 'UCI HAR Dataset.zip' (60.999.314 bytes).
+# Hash de referencia do projeto; NAO confirmado em fonte independente (ver docstring).
 EXPECTED_INNER_ZIP_SHA256 = "2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0"
 
 MANDATORY_FILES = {
@@ -28,6 +42,13 @@ def compute_sha256(filepath: Path) -> str:
         while chunk := f.read(65536):
             sha256.update(chunk)
     return sha256.hexdigest()
+
+def verify_hash(zip_path: Path) -> bool:
+    """Verificacao criptografica do ZIP interno. Retorna True somente se o hash coincidir."""
+    actual = compute_sha256(zip_path)
+    print(f"  Hash obtido:    {actual}")
+    print(f"  Hash esperado:  {EXPECTED_INNER_ZIP_SHA256}")
+    return actual.lower() == EXPECTED_INNER_ZIP_SHA256.lower()
 
 def verify_extracted_dataset(dataset_dir: Path) -> bool:
     """Verifica a presença e o tamanho mínimo de todos os arquivos obrigatórios."""
@@ -52,15 +73,22 @@ def verify_extracted_dataset(dataset_dir: Path) -> bool:
         
     return True
 
-def download_and_extract_dataset(target_dir="data"):
+def download_and_extract_dataset(target_dir="data", strict=False):
+    """Baixa/extrai o dataset.
+
+    strict=True: so retorna sucesso se o SHA-256 do ZIP interno tiver sido efetivamente
+    verificado durante este download.
+    """
     target_path = Path(target_dir).resolve()
     target_path.mkdir(parents=True, exist_ok=True)
     
     extracted_dataset = target_path / "UCI HAR Dataset"
     if verify_extracted_dataset(extracted_dataset):
-        print(f"Dataset já instalado e verificado integralmente (todos os 8 arquivos conferidos) em:")
+        print("Dataset ja presente em disco: verificacao ESTRUTURAL aprovada (8 arquivos obrigatorios,")
+        print("tamanhos minimos). Nenhuma verificacao criptografica foi feita nesta execucao;")
+        print("para verificar o SHA-256 apague 'data/UCI HAR Dataset' e execute novamente.")
         print(f"  -> {extracted_dataset}")
-        return True
+        return not strict
 
     zip_dest = target_path / "uci_har_download.zip"
     print(f"Baixando pacote oficial da UCI:")
@@ -98,25 +126,31 @@ def download_and_extract_dataset(target_dir="data"):
             nested_zip = candidate
             break
 
+    hash_verified = False
     if nested_zip.exists():
-        print(f"Verificando integridade SHA-256 de '{nested_zip.name}'...")
-        actual_sha256 = compute_sha256(nested_zip)
-        print(f"  Hash obtido:    {actual_sha256}")
-        print(f"  Hash esperado:  {EXPECTED_INNER_ZIP_SHA256}")
-        
-        if actual_sha256.lower() != EXPECTED_INNER_ZIP_SHA256.lower():
-            print("ERRO DE INTEGRIDADE: O hash SHA-256 do arquivo ZIP não corresponde ao oficial!")
+        print(f"Verificando SHA-256 de '{nested_zip.name}'...")
+        if not verify_hash(nested_zip):
+            print("ERRO DE INTEGRIDADE: o SHA-256 do ZIP interno nao coincide com o hash de referencia!")
             return False
-        print("  -> Integridade SHA-256 confirmada com sucesso!")
+        hash_verified = True
+        print("  -> SHA-256 coincide com o hash de referencia do projeto.")
         
         print(f"Extraindo '{nested_zip.name}'...")
         with zipfile.ZipFile(nested_zip, "r") as z:
             z.extractall(target_path)
         nested_zip.unlink(missing_ok=True)
+    else:
+        print("AVISO: o pacote baixado nao contem 'UCI HAR Dataset.zip'; o SHA-256 NAO foi verificado.")
+        print("       Apenas a verificacao estrutural sera aplicada.")
+        if strict:
+            print("Modo --strict: abortando por nao ser possivel verificar o hash.")
+            return False
 
     # Verificação pós-extração de todos os arquivos essenciais
     if verify_extracted_dataset(extracted_dataset):
-        print("\nSucesso absoluto! Dataset UCI HAR instalado e verificado:")
+        print("\nDataset UCI HAR instalado. Verificacoes realizadas nesta execucao:")
+        print(f"  - SHA-256 do ZIP interno: {'APROVADO' if hash_verified else 'NAO VERIFICADO'}")
+        print("  - Estrutural (8 arquivos obrigatorios, tamanhos minimos): APROVADO")
         for rel_path, _ in MANDATORY_FILES.items():
             sz_mb = (extracted_dataset / rel_path).stat().st_size / (1024 * 1024)
             print(f"  [OK] {rel_path} ({sz_mb:.2f} MB)")
@@ -126,4 +160,5 @@ def download_and_extract_dataset(target_dir="data"):
         return False
 
 if __name__ == "__main__":
-    download_and_extract_dataset()
+    ok = download_and_extract_dataset(strict="--strict" in sys.argv[1:])
+    sys.exit(0 if ok else 1)

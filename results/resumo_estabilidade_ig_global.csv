@@ -1,0 +1,3 @@
+conjunto,n_conjuntos_distintos_de_parametros,n_comparacoes,jaccard_top5_medio,jaccard_top5_dp_amostral,jaccard_top5_min,n_jaccard_igual_1,n_ordem_identica
+todos os arquivos de checkpoint,45,180,0.9962962962962963,0.03503813456583226,0.6666666666666666,178,176
+sem duplicacoes da referencia centralizada,45,135,0.9950617283950618,0.040420369583363494,0.6666666666666666,133,131

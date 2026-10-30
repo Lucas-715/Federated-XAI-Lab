@@ -198,8 +198,10 @@ Todas as 561 características do UCI HAR foram mapeadas com identificadores posi
 *Avaliação do Axioma da Completude:*
 A aproximação de Integrated Gradients apresentou erro relativo médio inferior a 1% nas cinco sementes e nos três números de passos avaliados (média geral de **0,557%** a 16 passos, **0,382%** a 32 passos e **0,238%** a 64 passos). Entretanto, é fundamental ressaltar que o atendimento ao limiar refere-se à **média amostral do erro**: em observações individuais limítrofes, redes neurais com ativações lineares por partes (ReLU) podem apresentar flutuações locais em pontos de descontinuidade da derivada (com erros máximos isolados atingindo 6,94% a 16 passos na semente 42, os quais se reduzem progressivamente para 3,20% a 32 passos e 1,73% a 64 passos, situando-se abaixo de 0,90% em todas as demais sementes a 64 passos).
 
-4. **Estabilidade dos Rankings Top-5 em Relação ao Número de Passos (Invariância Numérica e Ordenação):**
-Para demonstrar se as conclusões científicas sobre atributos relevantes são robustas à resolução da integração de Riemann, executou-se uma auditoria exaustiva por meio do script dedicado [scripts/analisar_estabilidade_ig.py](file:///c:/Users/Lucky/Documents/SD_Artigo/scripts/analisar_estabilidade_ig.py). Foram calculados os rankings Top-5 em 16, 32 e 64 passos para **todos os 60 checkpoints treinados** (5 sementes $\times$ 4 cenários $\times$ 3 métodos), totalizando **180 comparações pareadas**, integralmente persistidas em [results/estabilidade_ig_passos.csv](file:///c:/Users/Lucky/Documents/SD_Artigo/results/estabilidade_ig_passos.csv) e sintetizadas em [results/resumo_estabilidade_ig_passos.csv](file:///c:/Users/Lucky/Documents/SD_Artigo/results/resumo_estabilidade_ig_passos.csv):
+4. **Estabilidade dos Rankings Top-5 em Relação ao Número de Passos:**
+Para verificar se as conclusões sobre atributos relevantes dependem da resolução da integração de Riemann, o script [scripts/analisar_estabilidade_ig.py](../scripts/analisar_estabilidade_ig.py) calcula os rankings Top-5 com 16, 32 e 64 passos sobre as 120 amostras estratificadas, para cada um dos **60 arquivos de checkpoint** (5 sementes $\times$ 4 cenários $\times$ 3 métodos), e compara os pares (16×32, 32×64, 16×64), totalizando **180 comparações**. Cada comparação está registrada individualmente em [results/estabilidade_ig_passos.csv](../results/estabilidade_ig_passos.csv); as agregações estão em [results/resumo_estabilidade_ig_passos.csv](../results/resumo_estabilidade_ig_passos.csv) e [results/resumo_estabilidade_ig_global.csv](../results/resumo_estabilidade_ig_global.csv).
+
+> **60 arquivos, 45 conjuntos distintos de parâmetros.** Em cada semente, os quatro arquivos `*_centralizado.pt` possuem parâmetros idênticos (verificado por hash dos tensores): o baseline centralizado é treinado uma única vez e salvo sob quatro nomes. Logo, os 60 arquivos correspondem a 45 conjuntos distintos de parâmetros, e as linhas "Centralizado" da tabela abaixo repetem o mesmo modelo em cada cenário. A coluna `duplicate_reference` do CSV marca as cópias redundantes. Além disso, as comparações **não são experimentos estatisticamente independentes**: reutilizam os mesmos modelos, sementes e amostras de teste; os valores abaixo são descritivos e não sustentam inferência estatística.
 
 | Cenário de Distribuição | Método | $N$ Comparações | Média Jaccard Top-5 | Menor Jaccard | Taxa Ordem Idêntica (1º ao 5º) |
 |:---|:---|:---:|:---:|:---:|:---:|
@@ -215,15 +217,28 @@ Para demonstrar se as conclusões científicas sobre atributos relevantes são r
 | **Participantes naturais** | Centralizado | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
 | | FedAvg | 15 | **1,0000** | 1,0000 | 86,7% (13/15)* |
 | | FedProx | 15 | **0,9556** | 0,6667 | 86,7% (13/15)** |
-| **Média Geral** | **Todos os 60 Modelos** | **180 Comparações** | **0,9963 $\pm$ 0,0350** | 0,6667 | **97,78% (176/180)** |
 
-\* *Na semente 44 (FedAvg, Natural), o conjunto de atributos Top-5 permaneceu 100% idêntico ($J = 1,000$), ocorrendo apenas a troca de ordem entre o 3º e 4º lugar (`idx 507` e `idx 199`).*  
-\*\* *Na semente 45 (FedProx, Natural), os 4 primeiros atributos foram rigorosamente idênticos entre resoluções, ocorrendo uma substituição no 5º lugar apenas na transição para 64 passos ($J = 0,667$).*
+Indicadores globais (fonte: `resumo_estabilidade_ig_global.csv`):
 
-> **Distinção Metodológica entre Conjunto e Ordenação:** O índice de Jaccard quantifica a sobreposição de conjuntos. Para assegurar total transparência científica, verificou-se que em **97,78% dos casos (176 de 180 comparações)** a sequência posicional do 1º ao 5º atributo é **estritamente idêntica**, confirmando que a aproximação com 16 passos não apenas preserva os mesmos cinco atributos como também conserva sua hierarquia relativa de relevância.
+| Conjunto avaliado | Conjuntos distintos de parâmetros | Comparações | Jaccard médio $\pm$ DP amostral | Menor Jaccard | Jaccard = 1,000 | Ordem idêntica (1º ao 5º) |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Todos os 60 arquivos | 45 | 180 | 0,9963 $\pm$ 0,0350 | 0,6667 | 178/180 (98,89%) | 176/180 (97,78%) |
+| Sem duplicações do baseline centralizado | 45 | 135 | 0,9951 $\pm$ 0,0404 | 0,6667 | 133/135 (98,52%) | 131/135 (97,04%) |
 
+**Exceções observadas (4 das 180 comparações, todas no cenário Participantes naturais):**
+
+| Semente | Modelo | Comparação | Resultado |
+|:---:|:---|:---:|:---|
+| 44 | FedAvg | 16 × 32 | Jaccard 1,000; ordem diferente (inversão entre o 3º e o 4º lugar: `idx 507` e `idx 199`) |
+| 44 | FedAvg | 16 × 64 | Jaccard 1,000; ordem diferente (mesma inversão) |
+| 45 | FedProx | 32 × 64 | Jaccard 0,667; o 5º atributo muda (`idx 117` → `idx 508`) |
+| 45 | FedProx | 16 × 64 | Jaccard 0,667; o 5º atributo muda (`idx 117` → `idx 508`) |
+
+\* *Exceção da semente 44 (tabela acima).*  \*\* *Exceção da semente 45 (tabela acima).*
+
+> **Interpretação.** O Jaccard compara conjuntos e não detecta troca de ordem; por isso a taxa de ordem idêntica é reportada separadamente. Nas configurações avaliadas, os cinco atributos mais importantes e sua ordem foram **altamente estáveis** frente ao número de passos (178/180 comparações com o mesmo conjunto; 176/180 com a mesma ordem), com divergências pontuais concentradas em duas execuções do cenário Participantes naturais. Isso **não** equivale a invariância: a estabilidade foi medida somente nos três números de passos testados, sobre 120 amostras, e as exceções mostram que o 5º atributo pode ser sensível quando as importâncias do 4º ao 6º colocado são próximas (hipótese plausível, não testada aqui).
 5. **Generalização da Completude para Todos os Checkpoints Salvos:**
-A auditoria estendida aos 12 arquivos de checkpoint da semente 42 comprovou a aderência ao axioma da completude em todos os cenários e arquiteturas. Como o modelo centralizado treina sobre a união de todos os dados independentemente do particionamento cliente simulado, os quatro checkpoints centralizados correspondem à mesma linha de base:
+A auditoria estendida aos 12 arquivos de checkpoint da semente 42 mostrou aderência ao axioma da completude (erro médio abaixo de 1% a 16 passos) em todos os cenários e arquiteturas. Como o modelo centralizado treina sobre a união de todos os dados independentemente do particionamento cliente simulado, os quatro checkpoints centralizados correspondem à mesma linha de base:
 
 | Arquivo de Checkpoint (.pt) | Cenário Representado | Método | Erro Relativo Médio (16 Passos) | Erro Relativo Máximo (16 Passos) | Erro Relativo Médio (32 Passos) | Erro Relativo Máximo (32 Passos) |
 |:---|:---|:---|:---:|:---:|:---:|:---:|
@@ -240,7 +255,7 @@ A auditoria estendida aos 12 arquivos de checkpoint da semente 42 comprovou a ad
 | `participantes_naturais_fedavg.pt` | Natural | FedAvg | 0,565% | 8,257% | 0,391% | 2,825% |
 | `participantes_naturais_fedprox.pt` | Natural | FedProx | 0,572% | 7,435% | 0,418% | 2,988% |
 
-Em 100% dos 12 checkpoints, o erro relativo médio cumpriu o limiar de 1% já a 16 passos (variando entre 0,565% e 0,920%) e reduziu-se progressivamente a 32 passos (variando entre 0,349% e 0,663%).
+Nos 12 arquivos de checkpoint da semente 42 (que correspondem a 9 conjuntos distintos de parâmetros, pois os quatro arquivos centralizados são idênticos), o erro relativo médio cumpriu o limiar de 1% já a 16 passos (variando entre 0,565% e 0,920%) e reduziu-se progressivamente a 32 passos (variando entre 0,349% e 0,663%).
 
 ---
 
