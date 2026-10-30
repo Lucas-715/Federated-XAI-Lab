@@ -43,8 +43,9 @@ def run(args):
         'warning': 'Dados artificiais' if args.mode == 'synthetic' else 'UCI HAR real; particionamento de clientes simulado'
     }, indent=2, ensure_ascii=False), encoding='utf-8')
 
-    # Amostragem estratificada balanceada de XAI no teste
-    per_class = max(1, args.xai_samples // len(data.label_names))
+    # Amostragem estratificada balanceada de XAI no teste (respeita disponibilidade por classe)
+    min_class_test = int(np.bincount(data.y_test, minlength=len(data.label_names)).min())
+    per_class = min(max(1, args.xai_samples // len(data.label_names)), min_class_test)
     xai_indices, xai_meta = select_stratified_xai_samples(
         data.X_test, data.y_test, groups=getattr(data, 'group_test', None),
         samples_per_class=per_class, seed=args.seed

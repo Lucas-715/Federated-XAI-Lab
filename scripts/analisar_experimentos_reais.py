@@ -12,9 +12,6 @@ import matplotlib.pyplot as plt
 def run_statistical_analysis():
     # Coleta todas as execucoes reais
     seed_dirs = sorted(glob.glob('results/uci_seed_*'))
-    if len(seed_dirs) < 3:
-        # Tenta no diretorio do subprojeto
-        seed_dirs = sorted(glob.glob('Projeto_Pratico_Federated_XAI_UFC_Com_Resultados_Simulados/Projeto_Federated_XAI/results/uci_seed_*'))
         
     print(f"Diretorios encontrados: {seed_dirs}")
     assert len(seed_dirs) >= 3, f"Necessario ao menos 3 execucoes reais. Encontrados: {len(seed_dirs)}"

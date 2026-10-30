@@ -12,9 +12,8 @@
 - **Repositório de Origem:** UCI Machine Learning Repository
 - **URL Oficial:** [https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones](https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones)
 - **Citação:** Anguita, D., Ghio, A., Oneto, L., Parra, X., & Reyes-Ortiz, J. L. (2013). *A public domain dataset for human activity recognition using smartphones*. In European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning (ESANN).
-- **Arquivo de Origem:** `UCI HAR Dataset.zip`
-- **Tamanho do Arquivo:** 60.999.314 bytes (58,17 MB)
-- **Hash SHA-256:** `2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0`
+- **Arquivo Interno de Origem:** `UCI HAR Dataset.zip` (60.999.314 bytes / 58,17 MB)
+- **Hash SHA-256 Observado Localmente:** `2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0` *(observado no arquivo obtido do repositório da UCI pelos autores; não confirmado em fonte externa independente)*
 - **Diretório Local:** `data/UCI HAR Dataset/`
 
 ---
@@ -55,10 +54,10 @@ O problema consiste em classificação multiclasse supervisionada em 6 categoria
 - **Sobreposição entre Treino e Teste:** Rigorosamente **0 participantes** em comum ($Train \cap Test = \emptyset$).
 
 ### 3.2 Subdivisão de Validação Interna
-- Para garantir que a escolha e monitoramento de hiperparâmetros ocorram sem qualquer contaminação do conjunto de teste oficial, a validação é obtida exclusivamente por agrupamento de participantes de treinamento (`GroupShuffleSplit`, `test_size=0.20`, semente controlada):
-  - **Validação:** 5 participantes (`[1, 3, 15, 25, 27]`), totalizando 1.801 registros.
-  - **Treinamento Efetivo:** 16 participantes, totalizando 5.551 registros.
-  - **Sobreposição Treino/Validação/Teste:** Nenhuma sobreposição ($FinalTrain \cap Val = \emptyset$, $FinalTrain \cap Test = \emptyset$, $Val \cap Test = \emptyset$).
+- Para garantir que a escolha e monitoramento de hiperparâmetros ocorram sem qualquer contaminação do conjunto de teste oficial, a validação é obtida exclusivamente por agrupamento de participantes de treinamento (`GroupShuffleSplit`, `test_size=0.20`, `random_state=seed`):
+  - **Na semente de referência 42:** Validação com 5 participantes (`[1, 3, 15, 25, 27]`, 1.801 registros) e Treinamento Efetivo com 16 participantes (5.551 registros).
+  - **Nas 5 sementes experimentais (42 a 46):** Treinamento Efetivo de $5.603 \pm 37$ registros (16 participantes) e Validação de $1.749 \pm 37$ registros (5 participantes), mantendo o teste oficial fixo em 2.947 registros (9 participantes).
+  - **Sobreposição Treino/Validação/Teste:** Nenhuma sobreposição em nenhuma semente ($FinalTrain \cap Val = \emptyset$, $FinalTrain \cap Test = \emptyset$, $Val \cap Test = \emptyset$).
 
 ### 3.3 Distribuição de Classes por Partição
 
@@ -78,7 +77,7 @@ O problema consiste em classificação multiclasse supervisionada em 6 categoria
 
 1. **Valores Ausentes:** Verificação exaustiva executada em todas as 10.299 linhas e 561 colunas. Não há valores ausentes (`NaN`), infinitos (`Inf`) ou nulos. Não foi necessária imputação ou geração de registros artificiais.
 2. **Normalização / Padronização:**
-   - O `StandardScaler` é ajustado **exclusivamente** sobre as 5.551 amostras de treinamento efetivo.
+   - O `StandardScaler` é ajustado **exclusivamente** sobre as amostras de treinamento efetivo da respectiva semente (5.551 amostras na semente 42; $5.603 \pm 37$ nas sementes 42–46).
    - Os conjuntos de validação e teste são apenas transformados com a média e desvio padrão do treinamento.
    - Verificação numérica:
      - Média dos atributos de treino após padronização: $\approx 8,3 \times 10^{-8}$ ($\approx 0$).

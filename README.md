@@ -39,15 +39,19 @@ Federated-XAI-Lab/
 │       ├── explanation.py        # Integrated Gradients, Jaccard Top-K e analise de rankings
 │       └── experiment.py         # Orquestracao, coleta de metricas e exportacao
 ├── tests/
-│       ├── test_core.py          # Testes unitarios do nucleo
-│       ├── test_ucihar_io.py     # Testes de parser e layout do UCI HAR
-│       └── test_partitioning.py  # Testes de disjuncao, integridade e cobertura federada
+│       ├── test_core.py                  # Testes unitarios do nucleo (modelos, FedAvg, IG)
+│       ├── test_ucihar_io.py             # Testes de parser e layout oficial do UCI HAR
+│       ├── test_dataset_real.py          # Testes de integridade e nao-vazamento no UCI HAR real
+│       ├── test_partitioning.py          # Testes de disjuncao, integridade e cobertura federada
+│       ├── test_xai_axioms.py            # Testes do axioma da completude, amostragem e feature_idx
+│       └── test_pipeline_integration.py  # Teste de integracao ponta a ponta do pipeline CLI
 ├── scripts/
 │       ├── analisar_cenarios.py           # Analise estatistica e visual da heterogeneidade (TVD, Entropia)
-│       ├── analisar_experimentos_reais.py   # Consolidacao multissemente e testes pareados
-│       ├── recalcular_xai_checkpoints.py   # Recalculo de XAI controlado sobre os 60 checkpoints
+│       ├── analisar_experimentos_reais.py # Consolidacao multissemente e testes pareados
+│       ├── recalcular_xai_checkpoints.py  # Recalculo de XAI controlado sobre os 60 checkpoints
 │       ├── analisar_estabilidade_ig.py    # Estabilidade dos rankings Top-5 (16/32/64 passos)
 │       ├── download_ucihar.py             # Download do UCI HAR com verificacao SHA-256 / estrutural
+│       ├── gerar_entregavel_zip.py        # Geracao reprodutivel do pacote ZIP entregavel
 │       └── consolidar_execucoes.py
 ├── results/
 │       ├── uci_seed_42/                   # Execucao completa semente 42 (checkpoints, XAI, metricas)
@@ -92,10 +96,9 @@ python -m venv .venv
 # Linux/macOS:
 source .venv/bin/activate
 
-# 3. Instalar dependências e pacote em modo editável
+# 3. Instalar dependências (inclui pytest) e pacote em modo editável
 pip install -r requirements.txt
 pip install -e .
-pip install pytest
 
 # 4. Obter o dataset oficial UCI HAR (não incluído no ZIP por restrição de tamanho):
 python scripts/download_ucihar.py

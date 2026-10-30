@@ -1,4 +1,6 @@
-# Relatório de Auditoria Completa — Federated XAI Lab
+# Relatório de Auditoria Inicial (Fase 1) — Federated XAI Lab
+
+> **Nota de Escopo Histórico:** Este documento registra a auditoria da **Fase 1 (linha de base inicial do código-fonte antes da campanha multissemente com o UCI HAR)**, momento em que a suíte continha 6 testes unitários e o pacote ainda residia em um subdiretório antes da unificação na raiz. Todas as extensões identificadas na Seção 4 (métricas detalhadas por classe, perda de validação, classe-alvo controlada em Integrated Gradients, desambiguação posicional `idx 0..560` e expansão para 24 testes automatizados) foram implementadas e documentadas em [`RELATORIO_EXPERIMENTAL_UCI_HAR.md`](RELATORIO_EXPERIMENTAL_UCI_HAR.md) e no [`README.md`](../README.md).
 
 **Projeto:** Explicabilidade Local e Global em Aprendizado Federado Não-IID: Um Estudo com Dados de Sensores Distribuídos  
 **Instituição:** Universidade Federal do Ceará — Campus Russas  
@@ -12,7 +14,7 @@
 A auditoria inspecionou todos os arquivos e diretórios do repositório:
 - `Artigo UFC Aplicacao Prática (1) (1).pdf`: Artigo científico e caderno técnico de 26 páginas definindo a fundamentação teórica, formulações matemáticas, metodologia, resultados com dados sintéticos e especificações técnicas da aplicação.
 - `human+activity+recognition+using+smartphones/`: Contém os arquivos oficiais `UCI HAR Dataset.zip` (60.999.314 bytes, hash verificado) e `UCI HAR Dataset.names`.
-- `Projeto_Pratico_Federated_XAI_UFC_Com_Resultados_Simulados/Projeto_Federated_XAI/`:
+- Raiz do pacote Python (unificada na raiz do repositório a partir da Fase 2):
   - `src/flxai/`: Módulos centrais do pacote Python (`__init__.py`, `data.py`, `models.py`, `federated.py`, `explanation.py`, `experiment.py`).
   - `tests/`: Testes automatizados com pytest (`test_core.py`, `test_ucihar_io.py`).
   - `scripts/`: Scripts utilitários (`consolidar_execucoes.py`).

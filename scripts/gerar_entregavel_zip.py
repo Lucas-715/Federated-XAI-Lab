@@ -27,7 +27,8 @@ def create_deliverable_zip():
         ".git",
         ".venv",
         "data",
-        "federated_xai_lab.egg-info"
+        "federated_xai_lab.egg-info",
+        "test_pipeline"
     }
     exclude_extensions = {".pyc", ".pyo", ".zip"}
     

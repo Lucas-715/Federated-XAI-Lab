@@ -90,12 +90,12 @@ def compute_partition_statistics(dataset_path='data/UCI HAR Dataset', seed=42, c
     df = pd.DataFrame(detailed_rows)
     
     # Salva CSVs em results
-    for out_dir in [Path('results'), Path('Projeto_Pratico_Federated_XAI_UFC_Com_Resultados_Simulados/Projeto_Federated_XAI/results')]:
-        out_dir.mkdir(parents=True, exist_ok=True)
-        df.to_csv(out_dir / 'distribuicao_clientes.csv', index=False)
-        (out_dir / 'analise_heterogeneidade_cenarios.json').write_text(
-            json.dumps(scenario_metrics, indent=2, ensure_ascii=False), encoding='utf-8'
-        )
+    out_dir = Path('results')
+    out_dir.mkdir(parents=True, exist_ok=True)
+    df.to_csv(out_dir / 'distribuicao_clientes.csv', index=False)
+    (out_dir / 'analise_heterogeneidade_cenarios.json').write_text(
+        json.dumps(scenario_metrics, indent=2, ensure_ascii=False), encoding='utf-8'
+    )
 
     # Gera visualizacao grafica dos 4 cenarios
     fig, axes = plt.subplots(2, 2, figsize=(15, 11), sharey=True)
@@ -115,8 +115,7 @@ def compute_partition_statistics(dataset_path='data/UCI HAR Dataset', seed=42, c
         ax.legend(title='Classes', bbox_to_anchor=(1.02, 1), loc='upper left', fontsize=8)
 
     plt.tight_layout()
-    for out_dir in [Path('results'), Path('Projeto_Pratico_Federated_XAI_UFC_Com_Resultados_Simulados/Projeto_Federated_XAI/results')]:
-        fig.savefig(out_dir / 'fig_heterogeneidade_uci_4_cenarios.png', dpi=200, bbox_inches='tight')
+    fig.savefig(out_dir / 'fig_heterogeneidade_uci_4_cenarios.png', dpi=200, bbox_inches='tight')
     plt.close(fig)
     
     print("Analise concluida com sucesso!")

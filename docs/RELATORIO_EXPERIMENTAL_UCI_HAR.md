@@ -13,7 +13,7 @@
 - **Dataset:** UCI Human Activity Recognition Using Smartphones (UCI HAR).
 - **Origem e Repositório:** UCI Machine Learning Repository (Anguita et al., 2013).
 - **URL Oficial:** `https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones`
-- **Hash SHA-256 do Arquivo Oficial:** `2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0` (60.999.314 bytes).
+- **Hash SHA-256 Observado Localmente (`UCI HAR Dataset.zip`):** `2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0` (60.999.314 bytes; hash observado no pacote interno obtido da UCI pelos autores, não confirmado em referência externa independente).
 - **Total de Amostras:** 10.299 registros (7.352 de treinamento oficial e 2.947 de teste oficial).
 - **Participantes:** 30 indivíduos (idades entre 19 e 48 anos).
   - 21 participantes no treinamento oficial (`[1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30]`).
@@ -34,10 +34,10 @@
 
 ### 2.1 Separação dos Dados e Prevenção de Vazamento (Data Leakage)
 1. **Teste Intocável:** O conjunto de teste oficial (2.947 amostras dos participantes 2, 4, 9, 10, 12, 13, 18, 20 e 24) foi rigorosamente mantido fora de qualquer etapa de treinamento, ajuste ou partição federada.
-2. **Subdivisão de Validação:** Utilizou-se `GroupShuffleSplit` (20% dos participantes de treinamento) exclusivamente sobre os participantes de treino. 5 participantes (`[1, 3, 15, 25, 27]`, totalizando 1.801 amostras) formaram a validação, restando 5.551 amostras de 16 participantes para treinamento efetivo dos clientes federados.
+2. **Subdivisão de Validação:** Utilizou-se `GroupShuffleSplit` (20% dos participantes de treinamento, `random_state=seed`) exclusivamente sobre os 21 participantes de treino: 5 participantes compõem a validação ($1.749 \pm 37$ amostras nas 5 sementes; e.g., `[1, 3, 15, 25, 27]` com 1.801 amostras na semente 42) e 16 participantes compõem o treinamento efetivo dos clientes federados ($5.603 \pm 37$ amostras nas 5 sementes; 5.551 na semente 42).
 3. **Interseção Nula de Sujeitos:** Comprovada formalmente:
    $$S_{treino} \cap S_{val} = \emptyset, \quad S_{treino} \cap S_{teste} = \emptyset, \quad S_{val} \cap S_{teste} = \emptyset$$
-4. **Padronização:** O `StandardScaler` foi ajustado exclusivamente no subconjunto de treinamento efetivo ($X_{treino}$, 5.551 amostras) e apenas aplicado nas partições de validação e teste.
+4. **Padronização:** O `StandardScaler` foi ajustado exclusivamente no subconjunto de treinamento efetivo de cada semente ($X_{treino}$, $5.603 \pm 37$ amostras) e apenas aplicado nas partições de validação e teste.
 
 ### 2.2 Estratégias de Particionamento Federado (6 Clientes Simulados)
 - **Cenário A — Aproximadamente IID:** Particionamento Dirichlet com $\alpha = 100$.
@@ -45,7 +45,7 @@
 - **Cenário C — Não-IID severo:** Particionamento Dirichlet com $\alpha = 0,15$.
 - **Cenário D — Particionamento natural:** Agrupamento dos 16 participantes de treinamento entre os 6 clientes sem fragmentação de indivíduos entre clientes distintos.
 
-### 2.3 Métricas Efetivas de Heterogeneidade dos Cenários
+### 2.3 Métricas Efetivas de Heterogeneidade dos Cenários (Semente de Referência 42)
 
 | Cenário | Mín. Amostras / Cliente | Máx. Amostras / Cliente | TVD Médio em Relação ao Global | Entropia Normalizada Média ($H$) | Classes / Cliente |
 |:---|:---:|:---:|:---:|:---:|:---:|

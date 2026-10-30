@@ -23,7 +23,6 @@ def test_full_pipeline_synthetic_execution(tmp_path):
         "--local-epochs", "1",
         "--lr", "0.05",
         "--batch-size", "16",
-        "--xai-samples", "12",
         "--ig-steps", "4",
         "--client-xai-samples", "6",
         "--client-ig-steps", "4",

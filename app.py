@@ -207,8 +207,8 @@ if mode_choice == 'Execução Individual':
                     top_n = st.slider('Quantidade de Características (Top-N Global)', min_value=5, max_value=30, value=15, key='global_xai_slider')
                 
                 show_imp = sub_imp[sub_imp.method == method_xai].sort_values('rank').head(top_n).copy()
-                lbl = 'feature_name' if 'feature_name' in show_imp.columns else 'feature'
-                st.bar_chart(show_imp.set_index(lbl)[['mean_abs_attribution']])
+                # Usa 'feature' (inclui sufixo posicional '(idx i)' no UCI HAR) para evitar colisao dos 42 nomes repetidos
+                st.bar_chart(show_imp.set_index('feature')[['mean_abs_attribution']])
                 
                 cols_g = ['rank', 'feature', 'feature_name', 'mean_abs_attribution']
                 cols_g_disp = [c for c in cols_g if c in show_imp.columns]
@@ -237,8 +237,7 @@ if mode_choice == 'Execução Individual':
                     top_n_cli = st.slider('Quantidade de Características (Top-N Cliente)', min_value=5, max_value=25, value=10, key='client_xai_slider')
                 
                 show_cli = sub_cli[(sub_cli.method == method_cli) & (sub_cli.client == client_id)].sort_values('rank').head(top_n_cli).copy()
-                lbl_cli = 'feature_name' if 'feature_name' in show_cli.columns else 'feature'
-                st.bar_chart(show_cli.set_index(lbl_cli)[['mean_abs_attribution']])
+                st.bar_chart(show_cli.set_index('feature')[['mean_abs_attribution']])
                 
                 cols_c = ['rank', 'feature', 'feature_name', 'mean_abs_attribution']
                 cols_c_disp = [c for c in cols_c if c in show_cli.columns]
@@ -274,8 +273,7 @@ if mode_choice == 'Execução Individual':
                     top_local = sub_loc.sort_values(
                         by='attribution', key=abs, ascending=False
                     ).head(15)
-                    lbl_loc = 'feature_name' if 'feature_name' in top_local.columns else 'feature'
-                    st.bar_chart(top_local.set_index(lbl_loc)[['attribution']])
+                    st.bar_chart(top_local.set_index('feature')[['attribution']])
             else:
                 st.info(f'Não existem explicações de amostras individuais salvas para o cenário {selected_scenario} (amostras salvas apenas para IID/FedAvg como ilustração).')
         else:
@@ -318,7 +316,7 @@ else:
     
     st.subheader('Gráfico Comparativo de Macro-F1 Médio')
     pv_mean = df_res.pivot(index='scenario', columns='method', values='macro_f1_media')
-    st.bar_chart(pv_mean)
+    st.bar_chart(pv_mean, stack=False)
     
     # Testes Estatísticos Pareados
     stat_file = Path('results/teste_estatistico_pareado.json')
