@@ -71,6 +71,15 @@ def test_full_pipeline_synthetic_execution(tmp_path):
         content = json.loads(json_path.read_text(encoding="utf-8"))
         assert isinstance(content, (dict, list)), f"Conteudo invalido em {json_file}"
 
+    # Verificacao especifica de convergencia multi-passo
+    ig_json = json.loads((output_dir / "ig_convergencia_passos.json").read_text(encoding="utf-8"))
+    assert ig_json["steps_tested"] == [16, 32, 64]
+    assert "completeness_relative_error_16_steps" in ig_json
+    assert "completeness_relative_error_32_steps" in ig_json
+    assert "completeness_relative_error_64_steps" in ig_json
+    assert "completeness_axiom_met_1_pct_32_steps" in ig_json
+    assert "assessment" in ig_json
+
     # 4. Verificacao de Figuras geradas
     expected_pngs = [
         "comparacao_f1.png",

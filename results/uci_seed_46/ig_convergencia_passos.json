@@ -1,11 +1,17 @@
 {
   "steps_tested": [
     16,
-    32
+    32,
+    64
   ],
   "samples_evaluated": 20,
-  "mean_absolute_difference_16_vs_32": 0.0001035490568028763,
   "relative_difference_16_vs_32": 0.003421155270189047,
-  "completeness_axiom_relative_error_16_steps": 0.0022918619215488434,
-  "assessment": "Aproximação estável e axioma da completude satisfeito (< 1% erro)"
+  "relative_difference_32_vs_64": 0.0020634543616324663,
+  "completeness_relative_error_16_steps": 0.0022918619215488434,
+  "completeness_relative_error_32_steps": 0.0018800204852595925,
+  "completeness_relative_error_64_steps": 0.0014490695903077722,
+  "completeness_axiom_met_1_pct_16_steps": true,
+  "completeness_axiom_met_1_pct_32_steps": true,
+  "completeness_axiom_met_1_pct_64_steps": true,
+  "assessment": "Convergência monotônica observada. Erro relativo de completude: 0.229% (16 passos; conforme (< 1%)), 0.188% (32 passos; conforme < 1%) e 0.145% (64 passos; conforme < 1%). Axioma da completude matematicamente satisfeito com estabilização assintótica."
 }

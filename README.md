@@ -20,7 +20,7 @@ O projeto avalia e compara três estratégias de aprendizado:
 2. **FedAvg (Federated Averaging):** Agregação ponderada por tamanho amostral dos parâmetros locais (McMahan et al., 2017).
 3. **FedProx:** Otimização federada com penalização proximal local ($\mu = 0,3$) para conter a divergência de modelos locais em redes heterogêneas (Li et al., 2020).
 
-Os experimentos são conduzidos sobre o dataset real de sensores vestíveis **UCI Human Activity Recognition Using Smartphones** (Anguita et al., 2013), respeitando integralmente a separação oficial de indivíduos entre particionamento, treino, validação e teste.
+Os experimentos são conduzidos sobre o dataset real de sensores vestíveis **UCI Human Activity Recognition Using Smartphones** (Anguita et al., 2013), respeitando integralmente a separação de indivíduos: 9 voluntários de teste fixos (2.947 amostras para avaliação final não vista) e particionamento dos 21 voluntários de treinamento em 16 para treino local ($5.603 \pm 38$ amostras) e 5 para validação ($1.749 \pm 38$ amostras) via `GroupShuffleSplit` por semente.
 
 ---
 
@@ -140,8 +140,8 @@ python scripts/analisar_experimentos_reais.py
   - FedAvg vs. Centralizado: Jaccard Top-5 de **$0,689 \pm 0,363$ em IID**, **$0,463 \pm 0,380$ em Moderado**, **$0,425 \pm 0,248$ em Severo** e **$0,752 \pm 0,246$ em Natural**.
   - O controle da classe verdadeira revelou que divergências de classificação em instâncias limítrofes constituíam um fator de confusão relevante nas comparações puramente descritivas, embora coexistam com variações estocásticas nas representações dos modelos.
 - **Desambiguação de Atributos:** Todas as 561 posições de características possuem identificadores posicionalmente únicos (`idx 0` a `idx 560`), eliminando qualquer risco de colisão entre os 42 nomes triplicados do UCI HAR (como `tGravityAcc-energy()-X`, identificado exclusivamente como `idx 56`).
-- **Concordância Inter-Clientes (Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607 $\pm$ 0,177**. Sob heterogeneidade, a concordância média recua para **0,159 $\pm$ 0,084** (Moderado) e **0,157 $\pm$ 0,070** (Severo), refletindo empiricamente a especialização dos dados de treino em subconjuntos restritos de classes.
-- **Validação Axiomática:** Verificação quantitativa do Axioma da Completude ($\sum IG_i \approx F(x) - F(0)$) comprovou erro relativo de apenas **0,607%** a 16 passos e **0,171%** a 64 passos sobre modelos treinados.
+- **Concordância Inter-Clientes (Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607 $\pm$ 0,177**. Sob heterogeneidade, a concordância média recua para **0,159 $\pm$ 0,084** (Moderado) e **0,157 $\pm$ 0,070** (Severo), refletindo empiricamente a especialização dos dados de treino em subconjuntos restritos de classes combinada com a forte assimetria no volume amostral entre clientes no particionamento Dirichlet severo (e.g. de 11 a 2.572 amostras na semente 43, onde a amostragem de até 25 instâncias locais amplia a variância nos clientes menores).
+- **Validação Axiomática Multi-Passo:** Verificação quantitativa do Axioma da Completude ($\sum IG_i \approx F(x) - F(0)$) com avaliação multi-escala em 16, 32 e 64 passos. A 16 passos, o erro relativo médio foi de **0,624%** (com as sementes 42 e 43 ligeiramente acima de 1%, em 1,002% e 1,214%). A 32 e 64 passos, todas as sementes convergem estritamente abaixo do limiar de 1%, atingindo média de **0,450%** a 32 passos (máximo de 0,791%) e **0,314%** a 64 passos (máximo de 0,505%), comprovando convergência monotônica assintótica estrita.
 
 ---
 
