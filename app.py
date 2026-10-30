@@ -193,33 +193,71 @@ if mode_choice == 'Execução Individual':
 
     # TAB 5: Explicabilidade (Global & Local)
     with tab5:
-        st.subheader(f'Explicabilidade Global — Integrated Gradients ({selected_scenario})')
+        st.subheader(f'1. Explicabilidade Global — Integrated Gradients ({selected_scenario})')
         imp_path = folder / 'importancia_global.csv'
         if imp_path.exists():
             df_imp = pd.read_csv(imp_path)
             sub_imp = df_imp[df_imp.scenario == selected_scenario]
             if not sub_imp.empty and 'method' in sub_imp.columns:
-                methods_xai = sub_imp['method'].unique()
-                method_xai = st.selectbox('Método para Explicar', methods_xai)
-                top_n = st.slider('Quantidade de Características (Top-N)', min_value=5, max_value=30, value=15)
+                c_ig1, c_ig2 = st.columns([1, 1])
+                with c_ig1:
+                    methods_xai = sub_imp['method'].unique()
+                    method_xai = st.selectbox('Método do Modelo Global', methods_xai, key='global_xai_method')
+                with c_ig2:
+                    top_n = st.slider('Quantidade de Características (Top-N Global)', min_value=5, max_value=30, value=15, key='global_xai_slider')
                 
-                show_imp = sub_imp[sub_imp.method == method_xai].sort_values('rank').head(top_n)
-                st.bar_chart(show_imp.set_index('feature')[['mean_abs_attribution']])
-                st.dataframe(show_imp, use_container_width=True, hide_index=True)
+                show_imp = sub_imp[sub_imp.method == method_xai].sort_values('rank').head(top_n).copy()
+                lbl = 'feature_name' if 'feature_name' in show_imp.columns else 'feature'
+                st.bar_chart(show_imp.set_index(lbl)[['mean_abs_attribution']])
+                
+                cols_g = ['rank', 'feature', 'feature_name', 'mean_abs_attribution']
+                cols_g_disp = [c for c in cols_g if c in show_imp.columns]
+                st.dataframe(show_imp[cols_g_disp], use_container_width=True, hide_index=True)
             else:
                 st.info(f'Não há dados de importância global para o cenário {selected_scenario}.')
         else:
             st.info('Importância global não disponível para esta execução.')
             
+        st.markdown('---')
+        st.subheader(f'2. Importância de Características por Cliente Local — {selected_scenario}')
+        st.caption('Permite comparar como a relevância dos atributos varia entre clientes sob diferentes condições de heterogeneidade dos dados de treino.')
+        cli_path = folder / 'importancia_por_cliente.csv'
+        if cli_path.exists():
+            df_cli = pd.read_csv(cli_path)
+            sub_cli = df_cli[df_cli.scenario == selected_scenario]
+            if not sub_cli.empty and 'client' in sub_cli.columns and 'method' in sub_cli.columns:
+                c_c1, c_c2, c_c3 = st.columns([1, 1, 1])
+                with c_c1:
+                    methods_cli = sorted(sub_cli['method'].dropna().unique().tolist())
+                    method_cli = st.selectbox('Método Federado', methods_cli, key='client_xai_method')
+                with c_c2:
+                    clients_list = sorted(sub_cli['client'].dropna().unique().tolist())
+                    client_id = st.selectbox('Cliente Local', clients_list, format_func=lambda c: f'Cliente {int(c)}', key='client_xai_client')
+                with c_c3:
+                    top_n_cli = st.slider('Quantidade de Características (Top-N Cliente)', min_value=5, max_value=25, value=10, key='client_xai_slider')
+                
+                show_cli = sub_cli[(sub_cli.method == method_cli) & (sub_cli.client == client_id)].sort_values('rank').head(top_n_cli).copy()
+                lbl_cli = 'feature_name' if 'feature_name' in show_cli.columns else 'feature'
+                st.bar_chart(show_cli.set_index(lbl_cli)[['mean_abs_attribution']])
+                
+                cols_c = ['rank', 'feature', 'feature_name', 'mean_abs_attribution']
+                cols_c_disp = [c for c in cols_c if c in show_cli.columns]
+                st.dataframe(show_cli[cols_c_disp], use_container_width=True, hide_index=True)
+            else:
+                st.info(f'Não há dados de importância por cliente para o cenário {selected_scenario}.')
+        else:
+            st.info('Importância por cliente não disponível para esta execução.')
+
+        st.markdown('---')
+        st.subheader(f'3. Exemplo de Explicação Local (Amostra Individual)')
         loc_path = folder / 'atribuicoes_locais.csv'
         if loc_path.exists():
-            st.subheader('Exemplo de Explicação Local (Amostra Individual)')
             df_loc = pd.read_csv(loc_path)
             # Nunca misturar explicações de outros cenários/métodos
             df_loc = df_loc[df_loc['scenario'] == selected_scenario]
             if not df_loc.empty and 'method' in df_loc.columns:
                 methods_loc = sorted(df_loc['method'].dropna().unique().tolist())
-                method_local = st.selectbox('Método da explicação local', methods_loc)
+                method_local = st.selectbox('Método da explicação local', methods_loc, key='sample_xai_method')
                 df_loc = df_loc[df_loc['method'] == method_local]
             if not df_loc.empty:
                 sample_ids = sorted(df_loc['sample'].dropna().unique().tolist())
@@ -227,17 +265,21 @@ if mode_choice == 'Execução Individual':
                     s_idx = st.selectbox(
                         'Amostra para explicar',
                         sample_ids,
-                        format_func=lambda s: f'Amostra {int(s)}'
+                        format_func=lambda s: f'Amostra {int(s)}',
+                        key='sample_xai_id'
                     )
-                    sub_loc = df_loc[df_loc['sample'] == s_idx]
+                    sub_loc = df_loc[df_loc['sample'] == s_idx].copy()
                     if 'predicted_class' in sub_loc.columns:
-                        st.write(f"Classe prevista: {sub_loc['predicted_class'].iloc[0]}")
+                        st.write(f"Classe prevista: **{sub_loc['predicted_class'].iloc[0]}**")
                     top_local = sub_loc.sort_values(
                         by='attribution', key=abs, ascending=False
                     ).head(15)
-                    st.bar_chart(top_local.set_index('feature')[['attribution']])
+                    lbl_loc = 'feature_name' if 'feature_name' in top_local.columns else 'feature'
+                    st.bar_chart(top_local.set_index(lbl_loc)[['attribution']])
             else:
-                st.info('Não existem explicações locais nesta execução para o cenário selecionado.')
+                st.info(f'Não existem explicações de amostras individuais salvas para o cenário {selected_scenario} (amostras salvas apenas para IID/FedAvg como ilustração).')
+        else:
+            st.info('Atribuições locais não disponíveis para esta execução.')
 
     # TAB 6: Concordancia e Jaccard
     with tab6:
