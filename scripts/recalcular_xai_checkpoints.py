@@ -12,6 +12,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
+import matplotlib.pyplot as plt
 
 from flxai.data import uci_har_dataset, partition_dirichlet, partition_natural_subjects
 from flxai.models import new_model
@@ -46,12 +47,28 @@ def process_seed(seed: int, base_dir: Path):
     print(f"Amostragem estratificada salva: 120 amostras ({sampling_meta['class_distribution']})")
     print(f"Participantes no teste: {sampling_meta['subjects_represented']}")
 
-    scenarios = {
-        'IID': partition_dirichlet(data.y_train, clients=6, alpha=100.0, seed=seed),
-        'Nao-IID moderado': partition_dirichlet(data.y_train, clients=6, alpha=0.5, seed=seed),
-        'Nao-IID severo': partition_dirichlet(data.y_train, clients=6, alpha=0.15, seed=seed),
-        'Participantes naturais': partition_natural_subjects(data.group_train, clients=6, seed=seed)
-    }
+    # Reconstrucao ou carregamento exato das particoes originais dos clientes
+    part_file = seed_dir / "particoes_clientes.json"
+    if part_file.exists():
+        scenarios_raw = json.loads(part_file.read_text(encoding="utf-8"))
+        scenarios = {k: [np.array(p, dtype=int) for p in v] for k, v in scenarios_raw.items()}
+        print("  -> Carregadas partições originais de particoes_clientes.json")
+    else:
+        scenarios_def = [
+            ('IID', 'dirichlet', 100.0),
+            ('Nao-IID moderado', 'dirichlet', 0.5),
+            ('Nao-IID severo', 'dirichlet', 0.15),
+            ('Participantes naturais', 'natural', None)
+        ]
+        scenarios = {}
+        for s_index, (s_name, kind, alpha) in enumerate(scenarios_def):
+            if kind == 'natural':
+                scenarios[s_name] = partition_natural_subjects(data.group_train, clients=6, seed=seed)
+            else:
+                scenarios[s_name] = partition_dirichlet(data.y_train, clients=6, alpha=alpha, seed=seed + s_index, min_size=8)
+        saved_parts = {k: [list(map(int, p)) for p in v] for k, v in scenarios.items()}
+        part_file.write_text(json.dumps(saved_parts, indent=2), encoding="utf-8")
+        print("  -> Partições reconstruídas rigorosamente (seed + s_index) e salvas em particoes_clientes.json")
 
     explanations_pred = []
     explanations_gt = []
@@ -191,6 +208,20 @@ def process_seed(seed: int, base_dir: Path):
     pd.DataFrame(by_client_list).to_csv(seed_dir / 'importancia_por_cliente.csv', index=False)
     pd.DataFrame(cross_clients_list).to_csv(seed_dir / 'concordancia_entre_clientes.csv', index=False)
     pd.DataFrame(locals_iid_fedavg).to_csv(seed_dir / 'atribuicoes_locais.csv', index=False)
+    
+    # 2. Regenera o grafico de Top-10 features (FedAvg / Nao-IID severo) diretamente dos dados recalculados
+    tops = pd.DataFrame(explanations_pred)
+    f = tops[(tops.scenario == 'Nao-IID severo') & (tops.method == 'FedAvg')].nsmallest(10, 'rank').sort_values('rank', ascending=False)
+    if not f.empty:
+        fig, ax = plt.subplots(figsize=(9, 5))
+        ax.barh(f.feature, f.mean_abs_attribution, color='navy', edgecolor='black', linewidth=0.5)
+        ax.set_xlabel('Média Absoluta das Atribuições (Integrated Gradients)', fontsize=10)
+        ax.set_title(f'Top-10 Características Globais — FedAvg / Não-IID Severo (Semente {seed})', fontsize=11, fontweight='bold')
+        ax.grid(axis='x', linestyle='--', alpha=0.5)
+        fig.tight_layout()
+        fig.savefig(seed_dir / 'importancia_top10.png', dpi=200)
+        plt.close(fig)
+        print(f"  -> Gráfico importancia_top10.png regenerado com sucesso.")
     
     print(f"Semente {seed} recalculada e exportada com sucesso!")
 

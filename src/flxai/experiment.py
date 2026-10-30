@@ -74,10 +74,12 @@ def run(args):
     by_client = []
     cross_clients = []
     saved_models = {}
+    saved_partitions = {}
 
     for s_index, (scenario, kind, alpha) in enumerate(scenarios):
         partitions = (partition_natural_subjects(data.group_train, args.clients, args.seed)
                       if kind == 'natural' else partition_dirichlet(data.y_train, args.clients, alpha, args.seed + s_index, min_size=8))
+        saved_partitions[scenario] = [list(map(int, p)) for p in partitions]
         
         for client_id, subset in enumerate(partitions):
             for class_index, class_name in enumerate(data.label_names):
@@ -89,6 +91,7 @@ def run(args):
                 })
         
         ranks = {}
+        ranks_gt = {}
         for method in ['Centralizado', 'FedAvg', 'FedProx']:
             m_start = time.time()
             if method == 'Centralizado':
@@ -207,7 +210,8 @@ def run(args):
         'assessment': 'Aproximacao estavel e axioma da completude satisfeito (< 1% erro)'
     }, indent=2, ensure_ascii=False), encoding='utf-8')
 
-    # Exportacao de DataFrames
+    # Exportacao de DataFrames e Particoes
+    (output / 'particoes_clientes.json').write_text(json.dumps(saved_partitions, indent=2), encoding='utf-8')
     df = pd.DataFrame(results)
     df.to_csv(output / 'metricas.csv', index=False)
     pd.DataFrame(detailed_metrics).to_csv(output / 'metricas_detalhadas.csv', index=False)

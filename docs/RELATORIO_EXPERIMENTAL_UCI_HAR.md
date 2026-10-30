@@ -159,18 +159,18 @@ Todas as 561 características do UCI HAR foram mapeadas com identificadores posi
 | **Participantes naturais** | FedProx vs FedAvg | **0,9333 $\pm$ 0,1491** | **1,0000 $\pm$ 0,0000** |
 | | FedAvg vs Centralizado | **0,7524 $\pm$ 0,2461** | 0,5389 $\pm$ 0,3577 |
 
-*Destaque Metodológico:* A concordância entre FedAvg e FedProx permanece extraordinariamente estável (entre 86,7% e 100% de sobreposição nos Top-5) em ambas as avaliações. Além disso, o controle pela classe verdadeira eleva significativamente a concordância entre os modelos federados e o centralizado (atingindo 0,752 no cenário Natural e 0,689 em IID), comprovando que parte da divergência prévia decorria unicamente de discordâncias em amostras limítrofes mal classificadas.
+*Destaque Metodológico:* A concordância entre FedAvg e FedProx permanece extraordinariamente estável (entre 86,7% e 100% de sobreposição nos Top-5) em ambas as avaliações. Além disso, o controle pela classe verdadeira eleva substancialmente a concordância entre os modelos federados e o centralizado (atingindo 0,752 no cenário Natural e 0,689 em IID). Essa elevação indica que divergências em instâncias limítrofes mal classificadas constituíam um fator de confusão importante nas métricas puramente descritivas, embora não anulem por completo as diferenças residuais decorrentes das trajetórias de otimização descentralizadas.
 
 #### Concordância Top-5 Inter-Clientes (Sobre Dados Locais de Treino)
 
 | Cenário de Distribuição | Jaccard Inter-Clientes (FedAvg) | Jaccard Inter-Clientes (FedProx) |
 |:---|:---:|:---:|
 | **IID** | **0,6068 $\pm$ 0,1768** | **0,6248 $\pm$ 0,1772** |
-| **Não-IID moderado** | 0,2155 $\pm$ 0,1416 | 0,2015 $\pm$ 0,1479 |
-| **Não-IID severo** | 0,1485 $\pm$ 0,0678 | 0,1473 $\pm$ 0,0628 |
+| **Não-IID moderado** | 0,1593 $\pm$ 0,0837 | 0,1710 $\pm$ 0,0948 |
+| **Não-IID severo** | 0,1573 $\pm$ 0,0703 | 0,1627 $\pm$ 0,0721 |
 | **Participantes naturais** | 0,3611 $\pm$ 0,1135 | 0,3790 $\pm$ 0,1107 |
 
-> **Ressalva Metodológica sobre Explicabilidade Local (QP3):** Cada cliente calculou atribuições sobre seu respectivo particionamento local de treino. Nos cenários Não-IID moderado e severo, a partição local é dominada por apenas 1 a 3 classes de atividades. Consequentemente, a expressiva queda no Jaccard inter-clientes (de 0,607 para 0,148) decorre primariamente do viés na composição de classes entre clientes, e não de inconsistência no modelo global (o qual mantém Jaccard de 0,867 a 1,000 quando avaliado em amostras comuns de teste).
+> **Ressalva Metodológica sobre Explicabilidade Local (QP3):** Cada cliente calculou atribuições sobre seu respectivo particionamento local de treino. Nos cenários Não-IID moderado e severo, a partição local é dominada por subconjuntos restritos de classes de atividades. A acentuada redução da concordância inter-clientes (de 0,607 em IID para ~0,158 nos cenários não-IID) constitui um comportamento empírico consistente com o viés amostral de classes de cada cliente, evidenciando que explicações locais em dados de treino refletem primordialmente a especialização da amostra local e não a coerência do modelo global (o qual mantém Jaccard de 0,867 a 1,000 quando avaliado em amostras comuns de teste).
 
 ### 4.5 Validação Axiomática e Protocolo de Amostragem do Integrated Gradients
 

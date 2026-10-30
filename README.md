@@ -137,10 +137,10 @@ python scripts/analisar_experimentos_reais.py
 - **Amostragem Estratificada Rigorosa:** 120 instâncias de teste selecionadas exatamente com 20 amostras por classe de atividade (Walking, Walking Upstairs, Walking Downstairs, Sitting, Standing, Laying), com todos os 9 sujeitos de teste representados (`amostragem_xai.json`).
 - **Concordância Top-5 Controlada pela Classe Verdadeira:**
   - FedProx vs. FedAvg: Jaccard Top-5 de **$0,933$ em IID**, **$1,000$ em Não-IID Moderado**, **$0,867$ em Não-IID Severo** e **$0,933$ em Natural**.
-  - FedAvg vs. Centralizado: Jaccard Top-5 de **$0,689$ em IID**, **$0,463$ em Moderado**, **$0,425$ em Severo** e **$0,752$ em Natural**.
-  - O controle da classe verdadeira revelou que a divergência observada na classe prevista decorria primariamente de instâncias limítrofes mal classificadas, e não de inconsistência intrínseca nas representações dos modelos globais.
-- **Desambiguação de Atributos:** Todas as 561 posições de características possuem identificadores posicionalmente únicos (`idx 0` a `idx 560`), eliminando qualquer risco de colisão entre os 42 nomes triplicados do UCI HAR.
-- **Concordância Inter-Clientes (Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607**. Sob heterogeneidade severa, a concordância desaba para **0,148** (queda de 76%), comprovando que explicações locais em dados de treino refletem a especialização da amostra local e não o modelo global.
+  - FedAvg vs. Centralizado: Jaccard Top-5 de **$0,689 \pm 0,363$ em IID**, **$0,463 \pm 0,380$ em Moderado**, **$0,425 \pm 0,248$ em Severo** e **$0,752 \pm 0,246$ em Natural**.
+  - O controle da classe verdadeira revelou que divergências de classificação em instâncias limítrofes constituíam um fator de confusão relevante nas comparações puramente descritivas, embora coexistam com variações estocásticas nas representações dos modelos.
+- **Desambiguação de Atributos:** Todas as 561 posições de características possuem identificadores posicionalmente únicos (`idx 0` a `idx 560`), eliminando qualquer risco de colisão entre os 42 nomes triplicados do UCI HAR (como `tGravityAcc-energy()-X`, identificado exclusivamente como `idx 56`).
+- **Concordância Inter-Clientes (Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607 $\pm$ 0,177**. Sob heterogeneidade, a concordância média recua para **0,159 $\pm$ 0,084** (Moderado) e **0,157 $\pm$ 0,070** (Severo), refletindo empiricamente a especialização dos dados de treino em subconjuntos restritos de classes.
 - **Validação Axiomática:** Verificação quantitativa do Axioma da Completude ($\sum IG_i \approx F(x) - F(0)$) comprovou erro relativo de apenas **0,607%** a 16 passos e **0,171%** a 64 passos sobre modelos treinados.
 
 ---
@@ -157,14 +157,14 @@ streamlit run app.py
 
 ## 7. Testes Automatizados
 
-O repositório possui suite completa de 23 testes automatizados (testes unitários, axiomáticos, de particionamento e de conformidade do UCI HAR). Na ausência do dataset bruto no diretório local, os testes que dependem do arquivo bruto efetuam `skip` gracioso.
+O repositório possui suite completa de 24 testes automatizados (testes unitários, axiomáticos, de particionamento, de conformidade do UCI HAR e teste de integração ponta a ponta do pipeline). Na ausência do dataset bruto no diretório local, os testes que dependem do arquivo bruto efetuam `skip` gracioso.
 
 ```bash
 pytest -v tests
 ```
 Saída esperada:
 ```text
-============================== 23 passed in ~30s ==============================
+============================== 24 passed in ~30s ==============================
 ```
 
 ---

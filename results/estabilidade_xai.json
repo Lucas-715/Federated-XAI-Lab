@@ -129,26 +129,26 @@
     {
       "scenario": "Nao-IID moderado",
       "method": "FedAvg",
-      "jaccard_inter_clientes_medio": 0.2155026455026455,
-      "jaccard_inter_clientes_dp": 0.14157352472893378
+      "jaccard_inter_clientes_medio": 0.15925925925925927,
+      "jaccard_inter_clientes_dp": 0.08369807638660358
     },
     {
       "scenario": "Nao-IID moderado",
       "method": "FedProx",
-      "jaccard_inter_clientes_medio": 0.2014814814814815,
-      "jaccard_inter_clientes_dp": 0.14794210445015785
+      "jaccard_inter_clientes_medio": 0.17095238095238094,
+      "jaccard_inter_clientes_dp": 0.094837561637453
     },
     {
       "scenario": "Nao-IID severo",
       "method": "FedAvg",
-      "jaccard_inter_clientes_medio": 0.14846560846560847,
-      "jaccard_inter_clientes_dp": 0.06776861806107856
+      "jaccard_inter_clientes_medio": 0.1573015873015873,
+      "jaccard_inter_clientes_dp": 0.07034391036929567
     },
     {
       "scenario": "Nao-IID severo",
       "method": "FedProx",
-      "jaccard_inter_clientes_medio": 0.1473015873015873,
-      "jaccard_inter_clientes_dp": 0.06278413758736096
+      "jaccard_inter_clientes_medio": 0.1626984126984127,
+      "jaccard_inter_clientes_dp": 0.07211676118960167
     },
     {
       "scenario": "Participantes naturais",

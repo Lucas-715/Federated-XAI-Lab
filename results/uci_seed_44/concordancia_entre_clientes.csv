@@ -1,9 +1,9 @@
 scenario,method,mean_pairwise_top5_jaccard,std_pairwise_top5_jaccard,description
 IID,FedAvg,0.4563492063492064,0.14900780440887765,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
 IID,FedProx,0.49444444444444446,0.2042166975582614,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
-Nao-IID moderado,FedAvg,0.11190476190476191,0.19636242272441295,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
-Nao-IID moderado,FedProx,0.11005291005291004,0.19052027708492253,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
-Nao-IID severo,FedAvg,0.24867724867724866,0.3300053425887015,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
-Nao-IID severo,FedProx,0.24867724867724866,0.3300053425887015,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedAvg,0.2857142857142857,0.23466922871646723,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedProx,0.32380952380952377,0.2974897678400884,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedAvg,0.16296296296296295,0.32764099020075244,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedProx,0.16296296296296295,0.32764099020075244,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
 Participantes naturais,FedAvg,0.3875661375661376,0.23253458753727924,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
 Participantes naturais,FedProx,0.4362433862433862,0.23798876430083102,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
