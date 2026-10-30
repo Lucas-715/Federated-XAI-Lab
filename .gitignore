@@ -1,0 +1,20 @@
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Datasets
+*.zip
+**/data/UCI HAR Dataset/
+data/UCI HAR Dataset/
+
+# IDE
+.idea/
+.vscode/
+*.swp

@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "federated-xai-lab"
+version = "1.0.0"
+description = "Estudo reproduzivel de aprendizado federado nao-IID e explicabilidade"
+requires-python = ">=3.10"
+[tool.setuptools.packages.find]
+where = ["src"]

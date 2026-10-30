@@ -1,0 +1,10 @@
+scenario,method,accuracy,macro_f1,seed,source,test_subjects_held_out
+IID,Centralizado,0.9711111111111111,0.9722966792872749,44,synthetic,True
+IID,FedAvg,0.5666666666666667,0.5334571540880503,44,synthetic,True
+IID,FedProx,0.5622222222222222,0.5292845675640586,44,synthetic,True
+Nao-IID moderado,Centralizado,0.9711111111111111,0.9722966792872749,44,synthetic,True
+Nao-IID moderado,FedAvg,0.6533333333333333,0.6066890368007042,44,synthetic,True
+Nao-IID moderado,FedProx,0.6533333333333333,0.6066890368007042,44,synthetic,True
+Nao-IID severo,Centralizado,0.9711111111111111,0.9722966792872749,44,synthetic,True
+Nao-IID severo,FedAvg,0.5666666666666667,0.5315625,44,synthetic,True
+Nao-IID severo,FedProx,0.5577777777777778,0.5230372928985423,44,synthetic,True
