@@ -4,14 +4,17 @@
     32,
     64
   ],
-  "samples_evaluated": 20,
-  "relative_difference_16_vs_32": 0.007929603569209576,
-  "relative_difference_32_vs_64": 0.0047227670438587666,
-  "completeness_relative_error_16_steps": 0.010022318921983242,
-  "completeness_relative_error_32_steps": 0.006038289982825518,
-  "completeness_relative_error_64_steps": 0.0026991977356374264,
-  "completeness_axiom_met_1_pct_16_steps": false,
+  "samples_evaluated": 120,
+  "relative_difference_16_vs_32": 0.00738711329177022,
+  "relative_difference_32_vs_64": 0.004445243161171675,
+  "completeness_relative_error_16_steps": 0.007170844357460737,
+  "completeness_relative_error_32_steps": 0.005395258776843548,
+  "completeness_relative_error_64_steps": 0.0037167270202189684,
+  "max_completeness_relative_error_16_steps": 0.06944312155246735,
+  "max_completeness_relative_error_32_steps": 0.0320437029004097,
+  "max_completeness_relative_error_64_steps": 0.017316730692982674,
+  "completeness_axiom_met_1_pct_16_steps": true,
   "completeness_axiom_met_1_pct_32_steps": true,
   "completeness_axiom_met_1_pct_64_steps": true,
-  "assessment": "Convergência monotônica observada. Erro relativo de completude: 1.002% (16 passos; desvio residual sutil (1.002% > 1%)), 0.604% (32 passos; conforme < 1%) e 0.270% (64 passos; conforme < 1%). Axioma da completude matematicamente satisfeito com estabilização assintótica."
+  "assessment": "Avaliação sobre 120 amostras estratificadas (todas as 6 classes de atividade representadas). Erro relativo médio: 0.717% (16 passos; máx: 6.944%; conforme (< 1%)), 0.540% (32 passos; máx: 3.204%; conforme (< 1%)) e 0.372% (64 passos; máx: 1.732%; conforme (< 1%)). Aproximação de Riemann satisfaz o axioma da completude."
 }

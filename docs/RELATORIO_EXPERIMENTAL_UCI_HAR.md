@@ -71,13 +71,13 @@
   - Sementes independentes executadas: 42, 43, 44, 45 e 46 ($N = 5$).
 - **Protocolo de Avaliação e Integridade do Teste:**
   - O conjunto de teste oficial do UCI HAR reserva 9 voluntários independentes (2.947 amostras) exclusivamente para avaliação final, garantindo separação estrita por indivíduos em 100% dos experimentos.
-  - O particionamento entre treinamento local e validação foi realizado via `GroupShuffleSplit(n_splits=1, test_size=0.24, random_state=seed)` sobre os 21 voluntários de treinamento oficiais (16 voluntários para treino local e 5 para validação). Como os voluntários apresentam quantidades ligeiramente distintas de janelas de sensores, a composição exata varia por semente:
+  - O particionamento entre treinamento local e validação foi realizado via `GroupShuffleSplit(n_splits=1, test_size=0.20, random_state=seed)` sobre os 21 voluntários de treinamento oficiais (16 voluntários para treino local e 5 para validação). Como os voluntários apresentam quantidades ligeiramente distintas de janelas de sensores, a composição exata varia por semente:
     - **Semente 42:** Treino = 5.551 amostras (16 voluntários) | Validação = 1.801 amostras (5 voluntários)
     - **Semente 43:** Treino = 5.636 amostras (16 voluntários) | Validação = 1.716 amostras (5 voluntários)
     - **Semente 44:** Treino = 5.622 amostras (16 voluntários) | Validação = 1.730 amostras (5 voluntários)
     - **Semente 45:** Treino = 5.578 amostras (16 voluntários) | Validação = 1.774 amostras (5 voluntários)
     - **Semente 46:** Treino = 5.627 amostras (16 voluntários) | Validação = 1.725 amostras (5 voluntários)
-    - *Média Geral:* Treino = $5.603 \pm 38$ amostras | Validação = $1.749 \pm 38$ amostras | Teste = 2.947 amostras fixas.
+    - *Média Geral:* Treino = $5.603 \pm 37$ amostras | Validação = $1.749 \pm 37$ amostras | Teste = 2.947 amostras fixas.
   - *Ressalva Metodológica de Dispersão:* Essa estratégia avalia a sensibilidade a diferentes seleções de voluntários; logo, a dispersão estocástica reportada entre as 5 sementes decorre conjuntamente da composição dos indivíduos de treino, do particionamento federado (Dirichlet/Natural) e da inicialização dos pesos da rede.
   - *Transparência metodológica:* Durante a fase exploratória de desenvolvimento da instrumentação de métricas, uma execução inicial verificou a carga e inferência do pipeline sobre `X_test`. Conforme auditado no histórico, **nenhum hiperparâmetro ou componente da arquitetura foi ajustado ou otimizado em função desse teste** — os parâmetros $\eta = 0,07, \mu = 0,3, B = 64$ permaneceram estritamente congelados conforme especificado no projeto inicial.
 - **Parâmetros de Explicabilidade (Integrated Gradients):**
@@ -182,20 +182,21 @@ Todas as 561 características do UCI HAR foram mapeadas com identificadores posi
 
 1. **Amostragem Estratificada Balanceada de Produção:** Implementada diretamente na rotina principal (`select_stratified_xai_samples`), extraindo exatamente 20 amostras para cada uma das 6 classes (*Walking, Upstairs, Downstairs, Sitting, Standing, Laying*), totalizando 120 amostras no conjunto de teste oficial. Os metadados de amostragem gerados em cada semente (`amostragem_xai.json`) documentam que todos os 9 voluntários de teste independentes (sujeitos `[2, 4, 9, 10, 12, 13, 18, 20, 24]`) estão representados.
 2. **Desambiguação Posicional de Características:** As 42 características com nomes duplicados no arquivo `features.txt` original receberam sufixos posicionais explícitos `(idx i)` e índices inteiros `feature_idx` de 0 a 560, eliminando ruído amostral nas comparações de conjuntos de Jaccard.
-3. **Validação do Axioma da Completude em Múltiplas Escalas (16, 32 e 64 Passos):** Conforme a fundamentação de Sundararajan, Taly & Yan (2017), a soma das atribuições deve recuperar a variação de saída da rede em relação à baseline:
+3. **Validação do Axioma da Completude em Múltiplas Escalas (16, 32 e 64 Passos) sobre Amostras Estratificadas (6 Classes de Atividade):** Conforme a fundamentação de Sundararajan, Taly & Yan (2017), a soma das atribuições deve recuperar a variação de saída da rede em relação à baseline:
    $$\sum_{i=1}^{561} IG_i(x) \approx F(x) - F(0)$$
-   A auditoria numérica nos modelos treinados (`iid_fedavg.pt` nas 5 sementes, avaliando 20 amostras sob o mesmo protocolo) registrou os seguintes erros relativos médios de completude:
+   A verificação numérica nos modelos treinados (`iid_fedavg.pt` nas 5 sementes), avaliando o conjunto completo das **120 amostras estratificadas** (20 por atividade, cobrindo todas as 6 classes e todos os 9 voluntários de teste), registrou os seguintes erros relativos de completude (média e máximo observados):
 
-| Semente | Erro Relativo (16 Passos) | Erro Relativo (32 Passos) | Erro Relativo (64 Passos) | Limiar 1% (16 Passos) | Limiar 1% (32 Passos) | Limiar 1% (64 Passos) |
+| Semente | 16 Passos (Média / Máx) | 32 Passos (Média / Máx) | 64 Passos (Média / Máx) | Média $< 1\%$ (16 Passos) | Média $< 1\%$ (32 Passos) | Média $< 1\%$ (64 Passos) |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Semente 42** | 1,002% | 0,604% | 0,270% | Não atendido (+0,002%) | Atendido | Atendido |
-| **Semente 43** | 1,214% | 0,791% | 0,505% | Não atendido (+0,214%) | Atendido | Atendido |
-| **Semente 44** | 0,569% | 0,483% | 0,355% | Atendido | Atendido | Atendido |
-| **Semente 45** | 0,106% | 0,185% | 0,293% | Atendido | Atendido | Atendido |
-| **Semente 46** | 0,229% | 0,188% | 0,145% | Atendido | Atendido | Atendido |
-| **Média Geral** | **0,624%** | **0,450%** | **0,314%** | 3/5 Atendidos | **5/5 Atendidos (100%)** | **5/5 Atendidos (100%)** |
+| **Semente 42** | 0,717% (máx: 6,944%) | 0,540% (máx: 3,204%) | 0,372% (máx: 1,732%) | Atendido | Atendido | Atendido |
+| **Semente 43** | 0,653% (máx: 1,824%) | 0,391% (máx: 1,308%) | 0,232% (máx: 0,841%) | Atendido | Atendido | Atendido |
+| **Semente 44** | 0,495% (máx: 2,862%) | 0,385% (máx: 1,570%) | 0,221% (máx: 0,896%) | Atendido | Atendido | Atendido |
+| **Semente 45** | 0,454% (máx: 1,106%) | 0,286% (máx: 0,926%) | 0,203% (máx: 0,645%) | Atendido | Atendido | Atendido |
+| **Semente 46** | 0,466% (máx: 2,388%) | 0,307% (máx: 1,681%) | 0,163% (máx: 0,716%) | Atendido | Atendido | Atendido |
+| **Média Geral** | **0,557%** (máx: 6,944%) | **0,382%** (máx: 3,204%) | **0,238%** (máx: 1,732%) | **5/5 Atendidos (100%)** | **5/5 Atendidos (100%)** | **5/5 Atendidos (100%)** |
 
-*Avaliação de Convergência:* A média geral com 16 passos foi de **0,624%**, embora duas sementes individuais (42 e 43) tenham apresentado aproximações residuais marginalmente superiores a 1,0% (1,002% e 1,214%). Ao expandir para 32 e 64 passos, observa-se convergência monotônica assintótica estrita: **100% das sementes cumprem o limiar de 1% a 32 passos** ($\le 0,791\%$) e estabilizam abaixo de **0,51% a 64 passos**. Isso comprova matematicamente que a aproximação de Riemann empregada é consistente com o axioma da completude.
+*Avaliação do Axioma da Completude:*
+Ao avaliar a amostra estratificada integral (120 instâncias abrangendo todas as 6 classes de atividade e todos os 9 voluntários de teste), o erro relativo médio de completude situou-se confortavelmente abaixo de 1% em todas as cinco sementes já a partir de 16 passos (média geral de **0,557%**). Com o aumento dos passos de integração para 32 e 64, a média geral do erro decresce progressivamente para **0,382%** e **0,238%**, respectivamente, com 100% das sementes mantendo média inferior a 0,55% a 32 passos e inferior a 0,38% a 64 passos. No nível de instâncias individuais, aproximações por somas de Riemann em redes neurais com ativações lineares por partes (ReLU) podem apresentar flutuações locais em pontos de descontinuidade da derivada (com erros máximos isolados de até 6,94% a 16 passos na semente 42, que se atenuam para 1,73% a 64 passos, situando-se abaixo de 0,90% em todas as demais sementes). Esses resultados confirmam que a aproximação de Riemann empregada é consistente com o axioma da completude para fins de determinação do ranking de importância de atributos.
 
 ---
 
