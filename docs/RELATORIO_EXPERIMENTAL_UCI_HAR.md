@@ -198,23 +198,49 @@ Todas as 561 características do UCI HAR foram mapeadas com identificadores posi
 *Avaliação do Axioma da Completude:*
 A aproximação de Integrated Gradients apresentou erro relativo médio inferior a 1% nas cinco sementes e nos três números de passos avaliados (média geral de **0,557%** a 16 passos, **0,382%** a 32 passos e **0,238%** a 64 passos). Entretanto, é fundamental ressaltar que o atendimento ao limiar refere-se à **média amostral do erro**: em observações individuais limítrofes, redes neurais com ativações lineares por partes (ReLU) podem apresentar flutuações locais em pontos de descontinuidade da derivada (com erros máximos isolados atingindo 6,94% a 16 passos na semente 42, os quais se reduzem progressivamente para 3,20% a 32 passos e 1,73% a 64 passos, situando-se abaixo de 0,90% em todas as demais sementes a 64 passos).
 
-4. **Estabilidade dos Rankings Top-5 em Relação ao Número de Passos (Invariância Numérica):**
-Para demonstrar se as conclusões científicas sobre atributos relevantes são robustas à resolução da integração de Riemann, recalculou-se o índice de Jaccard Top-5 entre os rankings gerados com 16, 32 e 64 passos sobre as 120 amostras de teste:
+4. **Estabilidade dos Rankings Top-5 em Relação ao Número de Passos (Invariância Numérica e Ordenação):**
+Para demonstrar se as conclusões científicas sobre atributos relevantes são robustas à resolução da integração de Riemann, executou-se uma auditoria exaustiva por meio do script dedicado [scripts/analisar_estabilidade_ig.py](file:///c:/Users/Lucky/Documents/SD_Artigo/scripts/analisar_estabilidade_ig.py). Foram calculados os rankings Top-5 em 16, 32 e 64 passos para **todos os 60 checkpoints treinados** (5 sementes $\times$ 4 cenários $\times$ 3 métodos), totalizando **180 comparações pareadas**, integralmente persistidas em [results/estabilidade_ig_passos.csv](file:///c:/Users/Lucky/Documents/SD_Artigo/results/estabilidade_ig_passos.csv) e sintetizadas em [results/resumo_estabilidade_ig_passos.csv](file:///c:/Users/Lucky/Documents/SD_Artigo/results/resumo_estabilidade_ig_passos.csv):
 
-| Comparação de Resolução | Semente 42 | Semente 43 | Semente 44 | Semente 45 | Semente 46 | Média Geral Jaccard |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **16 passos vs. 32 passos** | 1,000 | 1,000 | 1,000 | 1,000 | 1,000 | **1,000 $\pm$ 0,000** |
-| **32 passos vs. 64 passos** | 1,000 | 1,000 | 1,000 | 1,000 | 1,000 | **1,000 $\pm$ 0,000** |
-| **16 passos vs. 64 passos** | 1,000 | 1,000 | 1,000 | 1,000 | 1,000 | **1,000 $\pm$ 0,000** |
+| Cenário de Distribuição | Método | $N$ Comparações | Média Jaccard Top-5 | Menor Jaccard | Taxa Ordem Idêntica (1º ao 5º) |
+|:---|:---|:---:|:---:|:---:|:---:|
+| **IID** | Centralizado | 15 (5 sementes $\times$ 3 pares) | **1,0000** | 1,0000 | **100% (15/15)** |
+| | FedAvg | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| | FedProx | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| **Não-IID moderado** | Centralizado | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| | FedAvg | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| | FedProx | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| **Não-IID severo** | Centralizado | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| | FedAvg | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| | FedProx | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| **Participantes naturais** | Centralizado | 15 | **1,0000** | 1,0000 | **100% (15/15)** |
+| | FedAvg | 15 | **1,0000** | 1,0000 | 86,7% (13/15)* |
+| | FedProx | 15 | **0,9556** | 0,6667 | 86,7% (13/15)** |
+| **Média Geral** | **Todos os 60 Modelos** | **180 Comparações** | **0,9963 $\pm$ 0,0350** | 0,6667 | **97,78% (176/180)** |
 
-*Resultado Científico:* Em **100% das sementes** e em **todos os 4 cenários de distribuição de dados**, o subconjunto de 5 características mais determinantes selecionadas pelo modelo global permaneceu **estritamente idêntico ($J = 1,000$)** entre 16, 32 e 64 passos. Isso comprova empiricamente que as flutuações residuais de completude não alteram a ordenação das principais características, validando a adoção de 16 passos como uma escolha analiticamente confiável e computacionalmente eficiente.
+\* *Na semente 44 (FedAvg, Natural), o conjunto de atributos Top-5 permaneceu 100% idêntico ($J = 1,000$), ocorrendo apenas a troca de ordem entre o 3º e 4º lugar (`idx 507` e `idx 199`).*  
+\*\* *Na semente 45 (FedProx, Natural), os 4 primeiros atributos foram rigorosamente idênticos entre resoluções, ocorrendo uma substituição no 5º lugar apenas na transição para 64 passos ($J = 0,667$).*
 
-5. **Generalização da Completude para Demais Checkpoints e Métodos:**
-A auditoria estendida aos 12 checkpoints da semente 42 (abrangendo Centralizado, FedAvg e FedProx nos cenários IID, Não-IID moderado, Não-IID severo e Participantes naturais) confirmou que a precisão média da aproximação de Riemann é consistente em toda a grade experimental:
-- **Modelos Centralizados:** erro relativo médio de **0,675%** a 16 passos e **0,437%** a 32 passos.
-- **Modelos FedAvg:** erro relativo médio variando entre **0,565% e 0,905%** a 16 passos, reduzindo-se para **0,349% a 0,641%** a 32 passos.
-- **Modelos FedProx:** erro relativo médio variando entre **0,572% e 0,920%** a 16 passos, reduzindo-se para **0,373% a 0,663%** a 32 passos.
-- Em 100% dos modelos avaliados, o erro relativo médio cumpriu o limiar de 1% já a 16 passos, decrescendo progressivamente a 32 passos.
+> **Distinção Metodológica entre Conjunto e Ordenação:** O índice de Jaccard quantifica a sobreposição de conjuntos. Para assegurar total transparência científica, verificou-se que em **97,78% dos casos (176 de 180 comparações)** a sequência posicional do 1º ao 5º atributo é **estritamente idêntica**, confirmando que a aproximação com 16 passos não apenas preserva os mesmos cinco atributos como também conserva sua hierarquia relativa de relevância.
+
+5. **Generalização da Completude para Todos os Checkpoints Salvos:**
+A auditoria estendida aos 12 arquivos de checkpoint da semente 42 comprovou a aderência ao axioma da completude em todos os cenários e arquiteturas. Como o modelo centralizado treina sobre a união de todos os dados independentemente do particionamento cliente simulado, os quatro checkpoints centralizados correspondem à mesma linha de base:
+
+| Arquivo de Checkpoint (.pt) | Cenário Representado | Método | Erro Relativo Médio (16 Passos) | Erro Relativo Máximo (16 Passos) | Erro Relativo Médio (32 Passos) | Erro Relativo Máximo (32 Passos) |
+|:---|:---|:---|:---:|:---:|:---:|:---:|
+| `iid_centralizado.pt` | IID | Centralizado | 0,675% | 6,308% | 0,437% | 2,113% |
+| `iid_fedavg.pt` | IID | FedAvg | 0,717% | 6,944% | 0,540% | 3,204% |
+| `iid_fedprox.pt` | IID | FedProx | 0,752% | 6,519% | 0,566% | 3,018% |
+| `nao-iid_moderado_centralizado.pt` | Não-IID moderado | Centralizado (baseline) | 0,675% | 6,308% | 0,437% | 2,113% |
+| `nao-iid_moderado_fedavg.pt` | Não-IID moderado | FedAvg | 0,599% | 12,755% | 0,349% | 6,077% |
+| `nao-iid_moderado_fedprox.pt` | Não-IID moderado | FedProx | 0,622% | 9,764% | 0,373% | 5,100% |
+| `nao-iid_severo_centralizado.pt` | Não-IID severo | Centralizado (baseline) | 0,675% | 6,308% | 0,437% | 2,113% |
+| `nao-iid_severo_fedavg.pt` | Não-IID severo | FedAvg | 0,905% | 12,444% | 0,641% | 7,482% |
+| `nao-iid_severo_fedprox.pt` | Não-IID severo | FedProx | 0,920% | 14,247% | 0,663% | 9,000% |
+| `participantes_naturais_centralizado.pt` | Natural | Centralizado (baseline) | 0,675% | 6,308% | 0,437% | 2,113% |
+| `participantes_naturais_fedavg.pt` | Natural | FedAvg | 0,565% | 8,257% | 0,391% | 2,825% |
+| `participantes_naturais_fedprox.pt` | Natural | FedProx | 0,572% | 7,435% | 0,418% | 2,988% |
+
+Em 100% dos 12 checkpoints, o erro relativo médio cumpriu o limiar de 1% já a 16 passos (variando entre 0,565% e 0,920%) e reduziu-se progressivamente a 32 passos (variando entre 0,349% e 0,663%).
 
 ---
 

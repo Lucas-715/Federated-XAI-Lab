@@ -1,0 +1,37 @@
+scenario,method,steps_a,steps_b,n_comparacoes,jaccard_top5_medio,jaccard_top5_min,taxa_ordem_identica
+IID,Centralizado,16,32,5,1.0,1.0,1.0
+IID,Centralizado,16,64,5,1.0,1.0,1.0
+IID,Centralizado,32,64,5,1.0,1.0,1.0
+IID,Fedavg,16,32,5,1.0,1.0,1.0
+IID,Fedavg,16,64,5,1.0,1.0,1.0
+IID,Fedavg,32,64,5,1.0,1.0,1.0
+IID,Fedprox,16,32,5,1.0,1.0,1.0
+IID,Fedprox,16,64,5,1.0,1.0,1.0
+IID,Fedprox,32,64,5,1.0,1.0,1.0
+Nao-IID moderado,Centralizado,16,32,5,1.0,1.0,1.0
+Nao-IID moderado,Centralizado,16,64,5,1.0,1.0,1.0
+Nao-IID moderado,Centralizado,32,64,5,1.0,1.0,1.0
+Nao-IID moderado,Fedavg,16,32,5,1.0,1.0,1.0
+Nao-IID moderado,Fedavg,16,64,5,1.0,1.0,1.0
+Nao-IID moderado,Fedavg,32,64,5,1.0,1.0,1.0
+Nao-IID moderado,Fedprox,16,32,5,1.0,1.0,1.0
+Nao-IID moderado,Fedprox,16,64,5,1.0,1.0,1.0
+Nao-IID moderado,Fedprox,32,64,5,1.0,1.0,1.0
+Nao-IID severo,Centralizado,16,32,5,1.0,1.0,1.0
+Nao-IID severo,Centralizado,16,64,5,1.0,1.0,1.0
+Nao-IID severo,Centralizado,32,64,5,1.0,1.0,1.0
+Nao-IID severo,Fedavg,16,32,5,1.0,1.0,1.0
+Nao-IID severo,Fedavg,16,64,5,1.0,1.0,1.0
+Nao-IID severo,Fedavg,32,64,5,1.0,1.0,1.0
+Nao-IID severo,Fedprox,16,32,5,1.0,1.0,1.0
+Nao-IID severo,Fedprox,16,64,5,1.0,1.0,1.0
+Nao-IID severo,Fedprox,32,64,5,1.0,1.0,1.0
+Participantes naturais,Centralizado,16,32,5,1.0,1.0,1.0
+Participantes naturais,Centralizado,16,64,5,1.0,1.0,1.0
+Participantes naturais,Centralizado,32,64,5,1.0,1.0,1.0
+Participantes naturais,Fedavg,16,32,5,1.0,1.0,0.8
+Participantes naturais,Fedavg,16,64,5,1.0,1.0,0.8
+Participantes naturais,Fedavg,32,64,5,1.0,1.0,1.0
+Participantes naturais,Fedprox,16,32,5,1.0,1.0,1.0
+Participantes naturais,Fedprox,16,64,5,0.9333333333333332,0.6666666666666666,0.8
+Participantes naturais,Fedprox,32,64,5,0.9333333333333332,0.6666666666666666,0.8
