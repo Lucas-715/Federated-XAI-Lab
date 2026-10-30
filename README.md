@@ -130,11 +130,12 @@ python scripts/analisar_experimentos_reais.py
 | **IID ($\alpha = 100$)** | 0,8955 $\pm$ 0,0728 | **0,9150 $\pm$ 0,0167** | 0,9077 $\pm$ 0,0243 | $p = 0,122$ (Não significativo) |
 | **Não-IID moderado ($\alpha = 0,5$)** | 0,8955 $\pm$ 0,0728 | **0,9089 $\pm$ 0,0250** | 0,9055 $\pm$ 0,0249 | $p = 0,248$ (Não significativo) |
 | **Não-IID severo ($\alpha = 0,15$)** | **0,8955 $\pm$ 0,0728** | 0,8637 $\pm$ 0,0739 | 0,8613 $\pm$ 0,0705 | $p = 0,486$ (Não significativo) |
-| **Participantes naturais** | 0,8955 $\pm$ 0,0728 | **0,9270 $\pm$ 0,0089** | 0,9233 $\pm$ 0,0109 | $p = 0,018$ (FedAvg $>$ FedProx) |
+| **Participantes naturais** | 0,8955 $\pm$ 0,0728 | **0,9270 $\pm$ 0,0089** | 0,9233 $\pm$ 0,0109 | $p_t = 0,018$ (Tendência empírica; não-sig. pós-Bonferroni $\alpha_{corr}=0,0125$) |
 
 ### Síntese de Explicabilidade (Integrated Gradients)
 - **Concordância Global FedAvg vs. FedProx:** O índice de Jaccard Top-5 entre as características mais importantes dos modelos globais foi de **$1,000$ em IID**, **$0,867$ em Moderado** e **$0,933$ em Severo**, atestando convergência na hierarquia de atributos globais.
 - **Concordância Inter-Clientes (Sobre Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607**. Sob heterogeneidade severa, a concordância desaba para **0,157** (queda de 74%), comprovando que explicações locais em dados de treino refletem a especialização da amostra local e não o modelo global.
+- **Validação Axiomática:** Verificação quantitativa do Axioma da Completude ($\sum IG_i \approx F(x) - F(0)$) comprovou erro relativo de apenas **0,607%** a 16 passos e **0,171%** a 64 passos sobre modelos treinados.
 
 ---
 
@@ -156,9 +157,10 @@ pytest -q
 ```
 Saída esperada:
 ```text
-...................                                                      [100%]
-19 passed in 25.19s
+.....................                                                    [100%]
+21 passed in 30.10s
 ```
+
 
 ---
 

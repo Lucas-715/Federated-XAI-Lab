@@ -7,8 +7,10 @@
     "t_pvalue": 0.12206185220788462,
     "wilcoxon_statistic": 1.0,
     "wilcoxon_pvalue": 0.125,
-    "statistically_significant_005": false,
-    "conclusion": "Sem diferença estatisticamente significativa (p >= 0.05)"
+    "bonferroni_threshold": 0.0125,
+    "statistically_significant_nominal_005": false,
+    "statistically_significant_bonferroni": false,
+    "conclusion": "Sem diferença estatisticamente significativa (p_t = 0.1221 >= 0.05)"
   },
   "Nao-IID moderado": {
     "n_pairs": 5,
@@ -18,8 +20,10 @@
     "t_pvalue": 0.24812411822611966,
     "wilcoxon_statistic": 3.0,
     "wilcoxon_pvalue": 0.3125,
-    "statistically_significant_005": false,
-    "conclusion": "Sem diferença estatisticamente significativa (p >= 0.05)"
+    "bonferroni_threshold": 0.0125,
+    "statistically_significant_nominal_005": false,
+    "statistically_significant_bonferroni": false,
+    "conclusion": "Sem diferença estatisticamente significativa (p_t = 0.2481 >= 0.05)"
   },
   "Nao-IID severo": {
     "n_pairs": 5,
@@ -29,8 +33,10 @@
     "t_pvalue": 0.485599509660243,
     "wilcoxon_statistic": 5.0,
     "wilcoxon_pvalue": 0.625,
-    "statistically_significant_005": false,
-    "conclusion": "Sem diferença estatisticamente significativa (p >= 0.05)"
+    "bonferroni_threshold": 0.0125,
+    "statistically_significant_nominal_005": false,
+    "statistically_significant_bonferroni": false,
+    "conclusion": "Sem diferença estatisticamente significativa (p_t = 0.4856 >= 0.05)"
   },
   "Participantes naturais": {
     "n_pairs": 5,
@@ -40,8 +46,10 @@
     "t_pvalue": 0.01841292895923731,
     "wilcoxon_statistic": 0.0,
     "wilcoxon_pvalue": 0.0625,
-    "statistically_significant_005": true,
-    "conclusion": "Diferença estatisticamente significativa (p < 0.05)"
+    "bonferroni_threshold": 0.0125,
+    "statistically_significant_nominal_005": true,
+    "statistically_significant_bonferroni": false,
+    "conclusion": "Tendência observada a favor de FedAvg (p_t = 0.0184), não-significativa após Bonferroni (limiar = 0.0125) e Wilcoxon (p = 0.0625)"
   },
   "heterogeneity_impact_fedavg_iid_vs_severo": {
     "n_pairs": 5,

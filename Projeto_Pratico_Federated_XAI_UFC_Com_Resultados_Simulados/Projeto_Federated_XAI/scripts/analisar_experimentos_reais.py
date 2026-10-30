@@ -93,7 +93,17 @@ def run_statistical_analysis():
                 wilcoxon_stat, p_val_w = float(res_w.statistic), float(res_w.pvalue)
             except Exception:
                 pass
-                
+        bonferroni_alpha = 0.05 / len(scenarios)
+        sig_nominal = bool(p_val_t < 0.05)
+        sig_bonferroni = bool(p_val_t < bonferroni_alpha)
+        
+        if sig_bonferroni and (p_val_w is not None and p_val_w < 0.05):
+            conc = f'Diferença estatisticamente robusta (p_t < {bonferroni_alpha:.4f} e p_w < 0.05)'
+        elif sig_nominal:
+            conc = f'Tendência observada a favor de FedAvg (p_t = {p_val_t:.4f}), não-significativa após Bonferroni (limiar = {bonferroni_alpha:.4f}) e Wilcoxon (p = {p_val_w:.4f})'
+        else:
+            conc = f'Sem diferença estatisticamente significativa (p_t = {p_val_t:.4f} >= 0.05)'
+
         paired_tests[sc] = {
             'n_pairs': len(diff),
             'diff_mean_fedprox_minus_fedavg': float(np.mean(diff)),
@@ -102,8 +112,10 @@ def run_statistical_analysis():
             't_pvalue': float(p_val_t),
             'wilcoxon_statistic': wilcoxon_stat,
             'wilcoxon_pvalue': p_val_w,
-            'statistically_significant_005': bool(p_val_t < 0.05),
-            'conclusion': 'Diferença estatisticamente significativa (p < 0.05)' if p_val_t < 0.05 else 'Sem diferença estatisticamente significativa (p >= 0.05)'
+            'bonferroni_threshold': float(bonferroni_alpha),
+            'statistically_significant_nominal_005': sig_nominal,
+            'statistically_significant_bonferroni': sig_bonferroni,
+            'conclusion': conc
         }
 
     # Teste de impacto do grau Nao-IID (IID vs Nao-IID Severo no FedAvg)

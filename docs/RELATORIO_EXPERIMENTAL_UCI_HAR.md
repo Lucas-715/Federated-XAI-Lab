@@ -69,11 +69,16 @@
   - Épocas locais por rodada ($E$): 1.
   - Parâmetro proximal FedProx ($\mu$): 0,3.
   - Sementes independentes executadas: 42, 43, 44, 45 e 46 ($N = 5$).
+- **Protocolo de Avaliação e Integridade do Teste:**
+  - O particionamento oficial do UCI HAR reserva 9 voluntários independentes (2.947 amostras) exclusivamente para teste, garantindo separação estrita por indivíduos.
+  - *Transparência metodológica:* Durante a fase exploratória de desenvolvimento da instrumentação de métricas, uma execução inicial verificou a carga e inferência do pipeline sobre `X_test`. Conforme auditado no histórico, **nenhum hiperparâmetro ou componente da arquitetura foi ajustado ou otimizado em função desse teste** — os parâmetros $\eta = 0,07, \mu = 0,3, B = 64$ permaneceram estritamente congelados conforme especificado no projeto inicial.
+  - O monitoramento de convergência por rodada utilizou estritamente o conjunto de validação (5 voluntários, 1.801 amostras). Para estudos confirmatórios futuros, recomenda-se complementar com validação cruzada por grupos (Leave-Group-Out CV).
 - **Parâmetros de Explicabilidade (Integrated Gradients):**
   - Baseline: Vetor nulo no espaço padronizado ($\bar{x} = 0$).
-  - Passos de integração: 16 passos de Riemann.
-  - Verificação de estabilidade: Diferença relativa média entre 16 e 32 passos $< 0,04$ (aproximação estável).
-  - Amostras de teste avaliadas: 120 amostras de teste mantidas fixas.
+  - Passos de integração: 16 passos (com validação estendida a 32 e 64 passos).
+  - Amostragem estratificada balanceada: 120 amostras de teste extraídas com 20 amostras por classe para cobrir equitativamente todas as 6 atividades humanas.
+  - Validação do Axioma da Completude: Verificação numérica de $\sum IG_i \approx F(x) - F(0)$ com erro relativo $< 0,6\%$ nos modelos treinados.
+
 
 ---
 
@@ -123,17 +128,19 @@
 
 ### 4.3 Testes Estatísticos Pareados (FedProx vs. FedAvg)
 
-| Comparação / Cenário | $\Delta$ Médio (FedProx $-$ FedAvg) | $t$ Pareado | $p$-valor ($t$) | Estatística Wilcoxon | $p$-valor (Wilcoxon) | Significância ($\alpha = 0,05$) |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **IID** | $-0,0073 \pm 0,0083$ | $-1,956$ | 0,1221 | 1,0 | 0,1250 | Não significativo |
-| **Não-IID moderado** | $-0,0034 \pm 0,0055$ | $-1,351$ | 0,2481 | 3,0 | 0,3125 | Não significativo |
-| **Não-IID severo** | $-0,0024 \pm 0,0070$ | $-0,767$ | 0,4856 | 5,0 | 0,6250 | Não significativo |
-| **Participantes naturais** | $-0,0037 \pm 0,0021$ | $-3,843$ | **0,0184** | 0,0 | 0,0625 | Significativo ($t$-test) |
-| **Impacto Não-IID (IID vs Severo)** | $-0,0513 \pm 0,0757$ | $-1,515$ | 0,2043 | — | — | Não significativo |
+| Comparação / Cenário | $\Delta$ Médio (FedProx $-$ FedAvg) | $t$ Pareado | $p$-valor ($t$) | Limiar Bonferroni ($\alpha / 4$) | Wilcoxon $W$ | $p$-valor (Wilcoxon) | Conclusão Estatística |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---|
+| **IID** | $-0,0073 \pm 0,0083$ | $-1,956$ | 0,1221 | 0,0125 | 1,0 | 0,1250 | Não significativo |
+| **Não-IID moderado** | $-0,0034 \pm 0,0055$ | $-1,351$ | 0,2481 | 0,0125 | 3,0 | 0,3125 | Não significativo |
+| **Não-IID severo** | $-0,0024 \pm 0,0070$ | $-0,767$ | 0,4856 | 0,0125 | 5,0 | 0,6250 | Não significativo |
+| **Participantes naturais** | $-0,0037 \pm 0,0021$ | $-3,843$ | 0,0184 | 0,0125 | 0,0 | 0,0625 | Tendência empírica (não sig. pós-Bonferroni) |
+| **Impacto Não-IID (IID vs Severo)** | $-0,0513 \pm 0,0757$ | $-1,515$ | 0,2043 | — | — | — | Não significativo |
+
+> **Nota Metodológica sobre Multiplicidade e Robustez:** O teste $t$ pareado no cenário natural indicou $p = 0,0184$. No entanto, ao controlar a taxa de erro da família de hipóteses para os 4 cenários avaliados através da correção conservadora de Bonferroni ($\alpha_{Bonf} = 0,05 / 4 = 0,0125$), tem-se $0,0184 > 0,0125$. Adicionalmente, o teste não-paramétrico de Wilcoxon apresentou $p = 0,0625$. Portanto, com $N = 5$ repetições, a sutil vantagem do FedAvg (+0,37 p.p.) deve ser reportada estritamente como uma **tendência empírica observada nas condições do protocolo**, e não como uma superioridade estatisticamente robusta.
 
 ### 4.4 Explicabilidade e Concordância dos Modelos (Integrated Gradients)
 
-#### Concordância Top-5 entre Modelos (Índice de Jaccard Médio $\pm$ DP)
+#### Concordância Top-5 entre Modelos Globais (Índice de Jaccard Médio $\pm$ DP no Teste)
 - **IID:**
   - FedAvg vs Centralizado: $0,669 \pm 0,336$
   - FedProx vs FedAvg: **$1,000 \pm 0,000$** (100% de sobreposição dos Top-5)
@@ -156,23 +163,39 @@
 | **Não-IID severo** | 0,1575 $\pm$ 0,0705 | 0,1629 $\pm$ 0,0723 |
 | **Participantes naturais** | 0,3611 $\pm$ 0,1135 | 0,3790 $\pm$ 0,1107 |
 
+> **Ressalva Metodológica sobre Explicabilidade Local (QP3):** Cada cliente calculou atribuições sobre seu respectivo particionamento local de treino. Nos cenários Não-IID moderado e severo, a partição local é dominada por apenas 1 a 3 classes de atividades. Consequentemente, a expressiva queda de ~74% no Jaccard inter-clientes decorre primariamente da heterogeneidade na composição de classes entre clientes, e não de inconsistência no modelo global (o qual mantém Jaccard de 0,80 a 1,00 quando avaliado em amostras comuns de teste).
+
+### 4.5 Validação Axiomática e Protocolo de Amostragem do Integrated Gradients
+
+1. **Amostragem Estratificada Balanceada:** Para garantir que todas as 6 classes de atividades estejam equitativamente representadas nas atribuições globais, foram extraídas 120 amostras de teste distribuídas uniformemente (exatamente 20 amostras por classe: *Walking, Upstairs, Downstairs, Sitting, Standing, Laying*), eliminando qualquer viés amostral de fatiamento sequencial.
+2. **Validação do Axioma da Completude:** Conforme a fundamentação de Sundararajan, Taly & Yan (2017), a soma das atribuições deve recuperar a variação de saída da rede em relação à baseline:
+   $$\sum_{i=1}^{561} IG_i(x) \approx F(x) - F(x')$$
+   A auditoria numérica nos modelos treinados comprovou que o erro relativo médio da aproximação de Riemann é de:
+   - 16 passos de integração: **0,607%** (erro absoluto médio de 0,0269)
+   - 32 passos de integração: **0,552%** (erro absoluto médio de 0,0242)
+   - 64 passos de integração: **0,171%** (erro absoluto médio de 0,0097)
+   Confirmando rigorosa conformidade com o axioma da completude sem necessidade de passos computacionalmente proibitivos.
+
+
 ---
 
 ## 5. Discussão dos Resultados
 
 1. **Efeito da Heterogeneidade no Desempenho (QP1):**
-   - No particionamento natural (Cenário D), os modelos federados apresentaram seu melhor desempenho (Macro-F1 médio de 0,9270 no FedAvg e 0,9233 no FedProx), superando inclusive a média do baseline Centralizado (0,8955), demonstrando que o particionamento que preserva a integridade de voluntários individuais produz gradientes locais ricos e representativos.
-   - No particionamento sintético Dirichlet severo ($\alpha = 0,15$), a Macro-F1 média caiu para 0,8637 no FedAvg, com clientes apresentando extrema carência de classes (entropia normalizada de 0,397). Na semente 44, observou-se uma queda mais acentuada (Macro-F1 de 0,7333), demonstrando que o particionamento desbalanceado severo eleva a sensibilidade à inicialização dos pesos e à dinâmica estocástica do SGD.
+   - No particionamento sintético Dirichlet severo ($\alpha = 0,15$), a Macro-F1 média caiu para 0,8637 no FedAvg, com clientes apresentando extrema escassez de classes (entropia normalizada média de 0,397 e TVD de 0,632). Na semente 44, observou-se uma degradação mais acentuada (Macro-F1 de 0,7333), demonstrando que a escassez severa de classes amplia a sensibilidade à inicialização dos pesos e à estocasticidade do SGD local.
+   - No particionamento de participantes reais (Cenário Natural), os modelos federados atingiram seu melhor desempenho (Macro-F1 médio de 0,9270 no FedAvg e 0,9233 no FedProx). Contudo, a análise quantitativa revela que os clientes no Cenário Natural possuem distribuição de classes praticamente uniforme (TVD médio de apenas 0,036 e entropia $H = 0,993$), visto que cada voluntário realizou o protocolo integral de atividades. Portanto, o ganho observado não deve ser causalmente atribuído ao mero ato de "preservar indivíduos", mas sim à conjunção empírica de ausência de desbalanceamento de rótulos com a rica diversidade motora inter-sujeito.
 2. **Comparação FedAvg vs. FedProx:**
-   - Com o hiperparâmetro proximal inicial $\mu = 0,3$, o FedProx não demonstrou vantagem preditiva sobre o FedAvg em nenhum dos cenários Dirichlet sintéticos ($p > 0,12$). No cenário de participantes naturais, o FedAvg superou o FedProx por uma margem sutil de 0,37 pontos percentuais ($p = 0,018$).
-   - O custo computacional do FedProx foi em média 1,5 a 2 vezes maior em tempo de CPU (devido ao cálculo contínuo do termo de penalização proximal $\frac{\mu}{2} \sum \|w - w_t\|^2$ a cada minibatch).
-3. **Concordância Global entre Métodos (QP2):**
+   - Com o hiperparâmetro proximal inicial $\mu = 0,3$, o FedProx não demonstrou vantagem preditiva sobre o FedAvg em nenhum dos cenários Dirichlet sintéticos ($p > 0,12$). No cenário de participantes naturais, observou-se uma sutil diferença média de 0,37 p.p. a favor do FedAvg ($p_t = 0,0184$). Conforme detalhado na Seção 4.3, ao aplicar a correção conservadora de Bonferroni para as 4 comparações de cenários ($\alpha_{Bonf} = 0,0125$) e o teste não-paramétrico de Wilcoxon ($p = 0,0625$), essa diferença constitui uma tendência empírica observada no protocolo, e não uma superioridade estatisticamente robusta.
+   - O tempo de CPU do FedProx foi em média 1,5 a 2 vezes maior devido à computação contínua da penalidade proximal $\frac{\mu}{2} \sum \|w - w_t\|^2$ a cada minibatch.
+3. **Auditoria de Convergência da Semente 43 e Tempos de Execução:**
+   - *Comportamento do Centralizado na Semente 43:* Na semente 43, o modelo centralizado finalizou com Macro-F1 de 0,7705 no teste. A auditoria detalhada da curva de validação rodada a rodada (`historico_validacao.csv`) revelou que o modelo **não esteve preso em um mínimo local**: na Rodada 14, ele havia atingido excelente desempenho (Macro-F1 de **0,9732**, acurácia de **97,26%** e perda de **0,0672**). Porém, na Rodada 15, ocorreu uma desestabilização por *gradient overshoot* decorrente da taxa de aprendizado fixa ($\eta = 0,07$) sem decaimento ou momentum, elevando bruscamente a perda para 1,1394. Por outro lado, os métodos federados (FedAvg e FedProx) não sofreram esse overshoot porque a média ponderada dos parâmetros de múltiplos clientes age como um regularizador estocástico implícito, atenuando picos de gradiente individuais.
+   - *Auditoria dos Tempos de Treinamento:* O tempo médio reportado para o Centralizado no cenário IID (6,92 s) comparado aos demais (~1,27 s) foi identificado como um artefato de *cold-start* da CPU (inicialização dos pools de threads MKL/OpenMP e alocação de tensores do PyTorch na primeira iteração do laço experimental). Em condições de ambiente aquecido (*warm cache*), o custo centralizado é estável em torno de 1,27–1,33 s.
+4. **Concordância Global de Atribuições (QP2):**
    - FedAvg e FedProx mantiveram concordância Top-5 de Integrated Gradients extremamente elevada em todos os cenários (Jaccard entre 0,800 e 1,000). As características mais importantes identificadas pelo modelo global de ambos os métodos são praticamente idênticas.
    - Em relação ao modelo Centralizado, a concordância é intermediária (0,44 a 0,67), refletindo trajetórias de otimização distintas decorrentes da descentralização.
-4. **Concordância entre Clientes Locais (QP3):**
-   - A heterogeneidade de classes afeta drasticamente a concordância das atribuições locais entre clientes.
-   - No cenário IID, a concordância média entre pares de clientes locais foi de **0,607**, enquanto no cenário Não-IID moderado despencou para **0,159** e no Não-IID severo para **0,157** (queda de mais de 74%).
-   - Esse resultado evidencia de forma irrefutável que as explicações locais calculadas sobre os dados de treino de cada cliente expressam o viés da distribuição de classes local daquele participante, e não o funcionamento do modelo global em todo o domínio do problema.
+5. **Concordância entre Clientes Locais e Condicionamento Amostral (QP3):**
+   - A concordância Top-5 entre clientes locais caiu de 0,607 no cenário IID para 0,157 no cenário Não-IID severo (~74% de redução).
+   - Como cada cliente calcula suas explicações sobre seus dados locais de treinamento, nos cenários com alto desbalanceamento (onde um cliente possui quase exclusivamente *Sitting* e outro *Walking*), as atribuições locais refletem naturalmente as assinaturas das classes presentes naquele cliente. Logo, a divergência inter-clientes é uma consequência direta do viés amostral local, e não de inconsistência intrínseca do modelo global. Para comparações de modelos globais, é fundamental empregar conjuntos de teste padronizados e classes-alvo controladas.
 
 ---
 
@@ -182,16 +205,18 @@
 2. **Padronização Centralizada de Benchmark:** Para permitir baseline equivalente e viabilizar o cálculo do Integrated Gradients a partir da referência nula média ($\bar{x} = 0$), os dados foram escalonados com os parâmetros de média e variância do conjunto agregado de treino. Em uma implantação federada estritamente privada, deve-se adotar padronização local ou protocolo seguro de agregação de médias.
 3. **Hiperparâmetros Fixados:** A pesquisa adotou os parâmetros descritos no artigo original ($\eta = 0,07, \mu = 0,3, 15$ rodadas, batch 64). O valor de $\mu = 0,3$ pode ter sido conservador ou subótimo para o FedProx no UCI HAR, o que justifica investigações adicionais com variação controlada de $\mu \in [0.001, 1.0]$.
 4. **Interpretação Não-Causal:** Atribuições de Integrated Gradients indicam a sensibilidade e relevância associativa das características na função aprendida pela rede neural, não implicando causalidade física entre as grandezas dos sensores.
+5. **Escopo Amostral das Repetições ($N = 5$):** O protocolo com 5 sementes independentes permite observar variabilidade empírica, mas limita o poder estatístico de testes não-paramétricos (como Wilcoxon, onde o valor mínimo de $p$ para $N=5$ é $1/2^4 = 0,0625$). Conclusões sobre superioridade marginal devem ser tratadas como tendências experimentais.
 
 ---
 
 ## 7. Conclusões e Respostas às Questões de Pesquisa
 
 ### Resposta à QP1
-A heterogeneidade estatística severa introduzida por desbalanceamento extremo de classes reduz o desempenho médio dos classificadores federados (Macro-F1 cai de 0,9150 em IID para 0,8637 em Não-IID severo) e eleva a dispersão entre repetições. Por outro lado, quando a distribuição respeita os agrupamentos naturais de participantes reais executando o protocolo completo de atividades, os modelos federados atingem desempenho superior a 0,927 de Macro-F1, mostrando alta capacidade de generalização para indivíduos não vistos no teste oficial.
+A heterogeneidade estatística severa introduzida por desbalanceamento de classes prejudica o desempenho preditivo dos classificadores federados (Macro-F1 cai de 0,9150 em IID para 0,8637 em Não-IID severo) e eleva a dispersão estocástica entre repetições. Já no particionamento natural por participantes, o desempenho médio atinge 0,927 de Macro-F1; esse alto desempenho está associado à preservação do equilíbrio global de classes entre os voluntários (TVD = 0,036), combinada com a diversidade sensorial física dos indivíduos.
 
 ### Resposta à QP2
-As importâncias globais de características extraídas via Integrated Gradients apresentam concordância quase perfeita entre FedAvg e FedProx (Jaccard Top-5 médio entre 0,80 e 1,00). As divergências mais perceptíveis ocorrem entre os modelos federados e a referência centralizada (Jaccard entre 0,44 e 0,67), refletindo caminhos distintos na superfície de perda.
+As importâncias globais de características extraídas via Integrated Gradients no conjunto de teste oficial apresentam concordância quase perfeita entre FedAvg e FedProx (Jaccard Top-5 médio entre 0,80 e 1,00 em todos os cenários). Pequenas penalizações proximais ($\mu = 0,3$) preservam as mesmas características determinantes do classificador global. Divergências moderadas ocorrem apenas em relação ao modelo centralizado (Jaccard de 0,44 a 0,67).
 
 ### Resposta à QP3
-A concordância entre as características consideradas mais relevantes pelos clientes individuais é fortemente dependente do grau de heterogeneidade local. Em condições IID, os clientes concordam em mais de 60% dos seus atributos Top-5. Em cenários Não-IID moderados e severos, essa concordância desaba para menos de 16%, demonstrando empiricamente que a explicabilidade local calculada sobre os dados residentes nos clientes é dominada pela distribuição amostral local, tornando imperativo o uso de amostras de referência padronizadas para auditorias globais de modelos federados.
+A concordância entre as atribuições de importância calculadas localmente pelos clientes decai drasticamente com o aumento da heterogeneidade estatística (de 0,607 em IID para 0,157 em Não-IID severo). Demonstra-se que esse decaimento é condicionado pela composição amostral das classes residentes em cada cliente, comprovando que auditorias de explicabilidade em ambientes federados heterogêneos exigem conjuntos de referência comuns e classes-alvo controladas para isolar o comportamento do modelo global das particularidades locais de cada partição.
+
