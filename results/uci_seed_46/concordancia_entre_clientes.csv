@@ -1,9 +1,9 @@
-scenario,method,mean_pairwise_top5_jaccard,description
-IID,FedAvg,0.7555555555555554,Explicacoes sobre dados locais de treino; analise descritiva
-IID,FedProx,0.8,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedAvg,0.10555555555555556,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedProx,0.11851851851851851,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedAvg,0.04523809523809524,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedProx,0.04523809523809524,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedAvg,0.23333333333333334,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedProx,0.2505291005291005,Explicacoes sobre dados locais de treino; analise descritiva
+scenario,method,mean_pairwise_top5_jaccard,std_pairwise_top5_jaccard,description
+IID,FedAvg,0.7555555555555554,0.1525792360723545,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+IID,FedProx,0.8,0.16903085094570333,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedAvg,0.18492063492063487,0.31183291828067533,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedProx,0.15370370370370373,0.23094647167843285,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedAvg,0.07486772486772487,0.12290488251201694,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedProx,0.08227513227513228,0.1214095499850832,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Participantes naturais,FedAvg,0.23333333333333334,0.19296489249459275,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Participantes naturais,FedProx,0.2505291005291005,0.17489196552864852,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)

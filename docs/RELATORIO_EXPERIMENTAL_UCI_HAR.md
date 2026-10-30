@@ -140,41 +140,50 @@
 
 ### 4.4 Explicabilidade e Concordância dos Modelos (Integrated Gradients)
 
-#### Concordância Top-5 entre Modelos Globais (Índice de Jaccard Médio $\pm$ DP no Teste)
-- **IID:**
-  - FedAvg vs Centralizado: $0,669 \pm 0,336$
-  - FedProx vs FedAvg: **$1,000 \pm 0,000$** (100% de sobreposição dos Top-5)
-- **Não-IID moderado:**
-  - FedAvg vs Centralizado: $0,440 \pm 0,148$
-  - FedProx vs FedAvg: **$0,867 \pm 0,183$**
-- **Não-IID severo:**
-  - FedAvg vs Centralizado: $0,491 \pm 0,352$
-  - FedProx vs FedAvg: **$0,933 \pm 0,149$**
-- **Participantes naturais:**
-  - FedAvg vs Centralizado: $0,667 \pm 0,000$
-  - FedProx vs FedAvg: **$0,800 \pm 0,183$**
+Para sanar ambiguidades de avaliação e assegurar comparações controladas, as atribuições de importância foram calculadas sob duas abordagens complementares nas 120 amostras de teste estratificadas (20 amostras por classe, abrangendo todos os 9 voluntários de teste):
+1. **Classe-Alvo Controlada (Ground-Truth):** Avalia os modelos sob a mesma classe verdadeira de referência, isolando puramente a dinâmica da superfície de decisão aprendida.
+2. **Classe Prevista pelo Modelo:** Avalia a classe efetivamente inferida por cada classificador.
+
+Todas as 561 características do UCI HAR foram mapeadas com identificadores posicionais únicos (`idx 0` a `idx 560`), garantindo que as 42 grandezas com nomes textuais idênticos no dataset original nunca colidam nas contagens do índice de Jaccard.
+
+#### Concordância Top-5 entre Modelos Globais no Teste (Média $\pm$ DP, $N = 5$ Sementes)
+
+| Cenário de Distribuição | Comparação de Modelos | Jaccard Top-5 Controlado (Classe Verdadeira) | Jaccard Top-5 Descritivo (Classe Prevista) |
+|:---|:---|:---:|:---:|
+| **IID** | FedProx vs FedAvg | **0,9333 $\pm$ 0,1491** | **0,9333 $\pm$ 0,1491** |
+| | FedAvg vs Centralizado | **0,6889 $\pm$ 0,3635** | 0,4635 $\pm$ 0,3804 |
+| **Não-IID moderado** | FedProx vs FedAvg | **1,0000 $\pm$ 0,0000** | **1,0000 $\pm$ 0,0000** |
+| | FedAvg vs Centralizado | **0,4635 $\pm$ 0,3804** | 0,3333 $\pm$ 0,3043 |
+| **Não-IID severo** | FedProx vs FedAvg | **0,8667 $\pm$ 0,1826** | **0,8667 $\pm$ 0,1826** |
+| | FedAvg vs Centralizado | **0,4246 $\pm$ 0,2480** | 0,3190 $\pm$ 0,2471 |
+| **Participantes naturais** | FedProx vs FedAvg | **0,9333 $\pm$ 0,1491** | **1,0000 $\pm$ 0,0000** |
+| | FedAvg vs Centralizado | **0,7524 $\pm$ 0,2461** | 0,5389 $\pm$ 0,3577 |
+
+*Destaque Metodológico:* A concordância entre FedAvg e FedProx permanece extraordinariamente estável (entre 86,7% e 100% de sobreposição nos Top-5) em ambas as avaliações. Além disso, o controle pela classe verdadeira eleva significativamente a concordância entre os modelos federados e o centralizado (atingindo 0,752 no cenário Natural e 0,689 em IID), comprovando que parte da divergência prévia decorria unicamente de discordâncias em amostras limítrofes mal classificadas.
 
 #### Concordância Top-5 Inter-Clientes (Sobre Dados Locais de Treino)
 
 | Cenário de Distribuição | Jaccard Inter-Clientes (FedAvg) | Jaccard Inter-Clientes (FedProx) |
 |:---|:---:|:---:|
 | **IID** | **0,6068 $\pm$ 0,1768** | **0,6248 $\pm$ 0,1772** |
-| **Não-IID moderado** | 0,1593 $\pm$ 0,0837 | 0,1710 $\pm$ 0,0948 |
-| **Não-IID severo** | 0,1575 $\pm$ 0,0705 | 0,1629 $\pm$ 0,0723 |
+| **Não-IID moderado** | 0,2155 $\pm$ 0,1416 | 0,2015 $\pm$ 0,1479 |
+| **Não-IID severo** | 0,1485 $\pm$ 0,0678 | 0,1473 $\pm$ 0,0628 |
 | **Participantes naturais** | 0,3611 $\pm$ 0,1135 | 0,3790 $\pm$ 0,1107 |
 
-> **Ressalva Metodológica sobre Explicabilidade Local (QP3):** Cada cliente calculou atribuições sobre seu respectivo particionamento local de treino. Nos cenários Não-IID moderado e severo, a partição local é dominada por apenas 1 a 3 classes de atividades. Consequentemente, a expressiva queda de ~74% no Jaccard inter-clientes decorre primariamente da heterogeneidade na composição de classes entre clientes, e não de inconsistência no modelo global (o qual mantém Jaccard de 0,80 a 1,00 quando avaliado em amostras comuns de teste).
+> **Ressalva Metodológica sobre Explicabilidade Local (QP3):** Cada cliente calculou atribuições sobre seu respectivo particionamento local de treino. Nos cenários Não-IID moderado e severo, a partição local é dominada por apenas 1 a 3 classes de atividades. Consequentemente, a expressiva queda no Jaccard inter-clientes (de 0,607 para 0,148) decorre primariamente do viés na composição de classes entre clientes, e não de inconsistência no modelo global (o qual mantém Jaccard de 0,867 a 1,000 quando avaliado em amostras comuns de teste).
 
 ### 4.5 Validação Axiomática e Protocolo de Amostragem do Integrated Gradients
 
-1. **Amostragem Estratificada Balanceada:** Para garantir que todas as 6 classes de atividades estejam equitativamente representadas nas atribuições globais, foram extraídas 120 amostras de teste distribuídas uniformemente (exatamente 20 amostras por classe: *Walking, Upstairs, Downstairs, Sitting, Standing, Laying*), eliminando qualquer viés amostral de fatiamento sequencial.
-2. **Validação do Axioma da Completude:** Conforme a fundamentação de Sundararajan, Taly & Yan (2017), a soma das atribuições deve recuperar a variação de saída da rede em relação à baseline:
-   $$\sum_{i=1}^{561} IG_i(x) \approx F(x) - F(x')$$
+1. **Amostragem Estratificada Balanceada de Produção:** Implementada diretamente na rotina principal (`select_stratified_xai_samples`), extraindo exatamente 20 amostras para cada uma das 6 classes (*Walking, Upstairs, Downstairs, Sitting, Standing, Laying*), totalizando 120 amostras no conjunto de teste oficial. Os metadados de amostragem gerados em cada semente (`amostragem_xai.json`) documentam que todos os 9 voluntários de teste independentes (sujeitos `[2, 4, 9, 10, 12, 13, 18, 20, 24]`) estão representados.
+2. **Desambiguação Posicional de Características:** As 42 características com nomes duplicados no arquivo `features.txt` original receberam sufixos posicionais explícitos `(idx i)` e índices inteiros `feature_idx` de 0 a 560, eliminando ruído amostral nas comparações de conjuntos de Jaccard.
+3. **Validação do Axioma da Completude:** Conforme a fundamentação de Sundararajan, Taly & Yan (2017), a soma das atribuições deve recuperar a variação de saída da rede em relação à baseline:
+   $$\sum_{i=1}^{561} IG_i(x) \approx F(x) - F(0)$$
    A auditoria numérica nos modelos treinados comprovou que o erro relativo médio da aproximação de Riemann é de:
    - 16 passos de integração: **0,607%** (erro absoluto médio de 0,0269)
    - 32 passos de integração: **0,552%** (erro absoluto médio de 0,0242)
    - 64 passos de integração: **0,171%** (erro absoluto médio de 0,0097)
    Confirmando rigorosa conformidade com o axioma da completude sem necessidade de passos computacionalmente proibitivos.
+
 
 
 ---

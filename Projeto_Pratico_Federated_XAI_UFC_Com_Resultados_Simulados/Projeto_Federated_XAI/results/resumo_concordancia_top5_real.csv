@@ -1,9 +1,0 @@
-scenario,comparison,jaccard_top5_medio,jaccard_top5_dp
-IID,FedAvg vs Centralizado,0.6690476190476191,0.3363384943274259
-IID,FedProx vs FedAvg,1.0,0.0
-Nao-IID moderado,FedAvg vs Centralizado,0.4404761904761905,0.1482130904522468
-Nao-IID moderado,FedProx vs FedAvg,0.8666666666666666,0.18257418583505539
-Nao-IID severo,FedAvg vs Centralizado,0.4912698412698413,0.35221914632018164
-Nao-IID severo,FedProx vs FedAvg,0.9333333333333332,0.14907119849998599
-Participantes naturais,FedAvg vs Centralizado,0.6666666666666666,0.0
-Participantes naturais,FedProx vs FedAvg,0.8,0.18257418583505539

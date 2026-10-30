@@ -1,9 +1,0 @@
-scenario,method,mean_pairwise_top5_jaccard,description
-IID,FedAvg,0.4,Explicacoes sobre dados locais de treino; analise descritiva
-IID,FedProx,0.4074074074074074,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedAvg,0.13756613756613756,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedProx,0.13756613756613756,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedAvg,0.22486772486772483,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedProx,0.21296296296296294,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedAvg,0.34656084656084657,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedProx,0.3544973544973545,Explicacoes sobre dados locais de treino; analise descritiva

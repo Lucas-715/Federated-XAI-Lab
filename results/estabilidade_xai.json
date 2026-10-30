@@ -3,50 +3,114 @@
     {
       "scenario": "IID",
       "comparison": "FedAvg vs Centralizado",
-      "jaccard_top5_medio": 0.6690476190476191,
-      "jaccard_top5_dp": 0.3363384943274259
+      "target_type": "ground_truth",
+      "jaccard_top5_medio": 0.6888888888888889,
+      "jaccard_top5_dp": 0.3634539385288028
+    },
+    {
+      "scenario": "IID",
+      "comparison": "FedAvg vs Centralizado",
+      "target_type": "predicted",
+      "jaccard_top5_medio": 0.46349206349206346,
+      "jaccard_top5_dp": 0.38035667709934967
     },
     {
       "scenario": "IID",
       "comparison": "FedProx vs FedAvg",
+      "target_type": "ground_truth",
+      "jaccard_top5_medio": 0.9333333333333332,
+      "jaccard_top5_dp": 0.14907119849998599
+    },
+    {
+      "scenario": "IID",
+      "comparison": "FedProx vs FedAvg",
+      "target_type": "predicted",
+      "jaccard_top5_medio": 0.9333333333333332,
+      "jaccard_top5_dp": 0.14907119849998599
+    },
+    {
+      "scenario": "Nao-IID moderado",
+      "comparison": "FedAvg vs Centralizado",
+      "target_type": "ground_truth",
+      "jaccard_top5_medio": 0.46349206349206346,
+      "jaccard_top5_dp": 0.38035667709934967
+    },
+    {
+      "scenario": "Nao-IID moderado",
+      "comparison": "FedAvg vs Centralizado",
+      "target_type": "predicted",
+      "jaccard_top5_medio": 0.3333333333333333,
+      "jaccard_top5_dp": 0.3042903097250923
+    },
+    {
+      "scenario": "Nao-IID moderado",
+      "comparison": "FedProx vs FedAvg",
+      "target_type": "ground_truth",
       "jaccard_top5_medio": 1.0,
       "jaccard_top5_dp": 0.0
     },
     {
       "scenario": "Nao-IID moderado",
-      "comparison": "FedAvg vs Centralizado",
-      "jaccard_top5_medio": 0.4404761904761905,
-      "jaccard_top5_dp": 0.1482130904522468
+      "comparison": "FedProx vs FedAvg",
+      "target_type": "predicted",
+      "jaccard_top5_medio": 1.0,
+      "jaccard_top5_dp": 0.0
     },
     {
-      "scenario": "Nao-IID moderado",
+      "scenario": "Nao-IID severo",
+      "comparison": "FedAvg vs Centralizado",
+      "target_type": "ground_truth",
+      "jaccard_top5_medio": 0.4246031746031746,
+      "jaccard_top5_dp": 0.24797618730107923
+    },
+    {
+      "scenario": "Nao-IID severo",
+      "comparison": "FedAvg vs Centralizado",
+      "target_type": "predicted",
+      "jaccard_top5_medio": 0.319047619047619,
+      "jaccard_top5_dp": 0.24706324986348452
+    },
+    {
+      "scenario": "Nao-IID severo",
       "comparison": "FedProx vs FedAvg",
+      "target_type": "ground_truth",
       "jaccard_top5_medio": 0.8666666666666666,
       "jaccard_top5_dp": 0.18257418583505539
     },
     {
       "scenario": "Nao-IID severo",
-      "comparison": "FedAvg vs Centralizado",
-      "jaccard_top5_medio": 0.4912698412698413,
-      "jaccard_top5_dp": 0.35221914632018164
-    },
-    {
-      "scenario": "Nao-IID severo",
       "comparison": "FedProx vs FedAvg",
-      "jaccard_top5_medio": 0.9333333333333332,
-      "jaccard_top5_dp": 0.14907119849998599
+      "target_type": "predicted",
+      "jaccard_top5_medio": 0.8666666666666666,
+      "jaccard_top5_dp": 0.18257418583505536
     },
     {
       "scenario": "Participantes naturais",
       "comparison": "FedAvg vs Centralizado",
-      "jaccard_top5_medio": 0.6666666666666666,
+      "target_type": "ground_truth",
+      "jaccard_top5_medio": 0.7523809523809524,
+      "jaccard_top5_dp": 0.24605734633835838
+    },
+    {
+      "scenario": "Participantes naturais",
+      "comparison": "FedAvg vs Centralizado",
+      "target_type": "predicted",
+      "jaccard_top5_medio": 0.5388888888888889,
+      "jaccard_top5_dp": 0.35767596895155274
+    },
+    {
+      "scenario": "Participantes naturais",
+      "comparison": "FedProx vs FedAvg",
+      "target_type": "ground_truth",
+      "jaccard_top5_medio": 0.9333333333333333,
+      "jaccard_top5_dp": 0.149071198499986
+    },
+    {
+      "scenario": "Participantes naturais",
+      "comparison": "FedProx vs FedAvg",
+      "target_type": "predicted",
+      "jaccard_top5_medio": 1.0,
       "jaccard_top5_dp": 0.0
-    },
-    {
-      "scenario": "Participantes naturais",
-      "comparison": "FedProx vs FedAvg",
-      "jaccard_top5_medio": 0.8,
-      "jaccard_top5_dp": 0.18257418583505539
     }
   ],
   "concordancia_entre_clientes": [
@@ -65,26 +129,26 @@
     {
       "scenario": "Nao-IID moderado",
       "method": "FedAvg",
-      "jaccard_inter_clientes_medio": 0.15925925925925927,
-      "jaccard_inter_clientes_dp": 0.08369807638660358
+      "jaccard_inter_clientes_medio": 0.2155026455026455,
+      "jaccard_inter_clientes_dp": 0.14157352472893378
     },
     {
       "scenario": "Nao-IID moderado",
       "method": "FedProx",
-      "jaccard_inter_clientes_medio": 0.17095238095238094,
-      "jaccard_inter_clientes_dp": 0.094837561637453
+      "jaccard_inter_clientes_medio": 0.2014814814814815,
+      "jaccard_inter_clientes_dp": 0.14794210445015785
     },
     {
       "scenario": "Nao-IID severo",
       "method": "FedAvg",
-      "jaccard_inter_clientes_medio": 0.15748677248677248,
-      "jaccard_inter_clientes_dp": 0.07050981727919484
+      "jaccard_inter_clientes_medio": 0.14846560846560847,
+      "jaccard_inter_clientes_dp": 0.06776861806107856
     },
     {
       "scenario": "Nao-IID severo",
       "method": "FedProx",
-      "jaccard_inter_clientes_medio": 0.16288359788359788,
-      "jaccard_inter_clientes_dp": 0.0723324642656898
+      "jaccard_inter_clientes_medio": 0.1473015873015873,
+      "jaccard_inter_clientes_dp": 0.06278413758736096
     },
     {
       "scenario": "Participantes naturais",
@@ -103,44 +167,44 @@
     {
       "scenario": "IID",
       "method": "Centralizado",
-      "top10_stability_jaccard_mean": 0.8212121212121213,
-      "top10_stability_jaccard_std": 0.07882671925303705
+      "top10_stability_jaccard_mean": 0.7757575757575758,
+      "top10_stability_jaccard_std": 0.1089786178526156
     },
     {
       "scenario": "IID",
       "method": "FedAvg",
-      "top10_stability_jaccard_mean": 0.9272727272727274,
-      "top10_stability_jaccard_std": 0.09389050536260403
+      "top10_stability_jaccard_mean": 0.7454545454545455,
+      "top10_stability_jaccard_std": 0.11445830686234583
     },
     {
       "scenario": "IID",
       "method": "FedProx",
-      "top10_stability_jaccard_mean": 0.8545454545454547,
-      "top10_stability_jaccard_std": 0.0766612766101425
+      "top10_stability_jaccard_mean": 0.7296037296037297,
+      "top10_stability_jaccard_std": 0.10089049161230419
     },
     {
       "scenario": "Nao-IID moderado",
       "method": "Centralizado",
-      "top10_stability_jaccard_mean": 0.8212121212121213,
-      "top10_stability_jaccard_std": 0.07882671925303705
+      "top10_stability_jaccard_mean": 0.7757575757575758,
+      "top10_stability_jaccard_std": 0.1089786178526156
     },
     {
       "scenario": "Nao-IID moderado",
       "method": "FedAvg",
-      "top10_stability_jaccard_mean": 0.8363636363636365,
-      "top10_stability_jaccard_std": 0.05749595745760688
+      "top10_stability_jaccard_mean": 0.7682983682983684,
+      "top10_stability_jaccard_std": 0.1645305337442446
     },
     {
       "scenario": "Nao-IID moderado",
       "method": "FedProx",
-      "top10_stability_jaccard_mean": 0.8363636363636365,
-      "top10_stability_jaccard_std": 0.05749595745760688
+      "top10_stability_jaccard_mean": 0.7682983682983684,
+      "top10_stability_jaccard_std": 0.1645305337442446
     },
     {
       "scenario": "Nao-IID severo",
       "method": "Centralizado",
-      "top10_stability_jaccard_mean": 0.8212121212121213,
-      "top10_stability_jaccard_std": 0.07882671925303705
+      "top10_stability_jaccard_mean": 0.7757575757575758,
+      "top10_stability_jaccard_std": 0.1089786178526156
     },
     {
       "scenario": "Nao-IID severo",
@@ -151,26 +215,26 @@
     {
       "scenario": "Nao-IID severo",
       "method": "FedProx",
-      "top10_stability_jaccard_mean": 0.8242424242424242,
-      "top10_stability_jaccard_std": 0.11138625254214321
+      "top10_stability_jaccard_mean": 0.7198135198135198,
+      "top10_stability_jaccard_std": 0.14322044559549302
     },
     {
       "scenario": "Participantes naturais",
       "method": "Centralizado",
-      "top10_stability_jaccard_mean": 0.8212121212121213,
-      "top10_stability_jaccard_std": 0.07882671925303705
+      "top10_stability_jaccard_mean": 0.7757575757575758,
+      "top10_stability_jaccard_std": 0.1089786178526156
     },
     {
       "scenario": "Participantes naturais",
       "method": "FedAvg",
-      "top10_stability_jaccard_mean": 0.8727272727272728,
-      "top10_stability_jaccard_std": 0.08782652573448142
+      "top10_stability_jaccard_mean": 0.7538461538461538,
+      "top10_stability_jaccard_std": 0.17440924363329519
     },
     {
       "scenario": "Participantes naturais",
       "method": "FedProx",
-      "top10_stability_jaccard_mean": 0.8727272727272728,
-      "top10_stability_jaccard_std": 0.08782652573448142
+      "top10_stability_jaccard_mean": 0.7993006993006994,
+      "top10_stability_jaccard_std": 0.16422293300393975
     }
   ]
 }

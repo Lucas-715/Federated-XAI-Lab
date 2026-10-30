@@ -19,11 +19,10 @@ st.sidebar.header('Configurações da Execução')
 
 available_runs = sorted(glob.glob('results/uci_seed_*') + glob.glob('results/demonstracao*'))
 if not available_runs:
-    available_runs = sorted(glob.glob('Projeto_Pratico_Federated_XAI_UFC_Com_Resultados_Simulados/Projeto_Federated_XAI/results/uci_seed_*'))
-if not available_runs:
     available_runs = ['results/uci_seed_42']
 
 mode_choice = st.sidebar.radio('Modo de Visualização', ['Execução Individual', 'Síntese Multissemente (Repetições)'])
+
 
 if mode_choice == 'Execução Individual':
     default_idx = 0
@@ -187,9 +186,6 @@ else:
     st.header('Síntese das Repetições com Dados Reais do UCI HAR')
     resumo_path = Path('results/resumo_experimentos_reais.csv')
     if not resumo_path.exists():
-        resumo_path = Path('Projeto_Pratico_Federated_XAI_UFC_Com_Resultados_Simulados/Projeto_Federated_XAI/results/resumo_experimentos_reais.csv')
-        
-    if not resumo_path.exists():
         st.error('Resumo multissemente não encontrado. Execute o script scripts/analisar_experimentos_reais.py.')
         st.stop()
         
@@ -203,16 +199,13 @@ else:
     
     # Testes Estatisticos Pareados
     stat_file = Path('results/teste_estatistico_pareado.json')
-    if not stat_file.exists():
-        stat_file = Path('Projeto_Pratico_Federated_XAI_UFC_Com_Resultados_Simulados/Projeto_Federated_XAI/results/teste_estatistico_pareado.json')
     if stat_file.exists():
         st.subheader('Testes Estatísticos Pareados (FedProx vs FedAvg)')
         st.json(json.loads(stat_file.read_text(encoding='utf-8')))
         
     # Estabilidade XAI
     xai_file = Path('results/estabilidade_xai.json')
-    if not xai_file.exists():
-        xai_file = Path('Projeto_Pratico_Federated_XAI_UFC_Com_Resultados_Simulados/Projeto_Federated_XAI/results/estabilidade_xai.json')
     if xai_file.exists():
+
         st.subheader('Estabilidade e Concordância de Explicabilidade')
         st.json(json.loads(xai_file.read_text(encoding='utf-8')))

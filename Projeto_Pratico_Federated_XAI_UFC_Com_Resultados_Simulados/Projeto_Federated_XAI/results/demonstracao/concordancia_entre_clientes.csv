@@ -1,7 +1,0 @@
-scenario,method,mean_pairwise_top5_jaccard,description
-IID,FedAvg,0.5698412698412699,"Explicações sobre dados locais de treino; análise descritiva, não validação fora da amostra"
-IID,FedProx,0.5698412698412699,"Explicações sobre dados locais de treino; análise descritiva, não validação fora da amostra"
-Nao-IID moderado,FedAvg,0.7841269841269839,"Explicações sobre dados locais de treino; análise descritiva, não validação fora da amostra"
-Nao-IID moderado,FedProx,0.7999999999999997,"Explicações sobre dados locais de treino; análise descritiva, não validação fora da amostra"
-Nao-IID severo,FedAvg,0.6261904761904762,"Explicações sobre dados locais de treino; análise descritiva, não validação fora da amostra"
-Nao-IID severo,FedProx,0.6261904761904762,"Explicações sobre dados locais de treino; análise descritiva, não validação fora da amostra"

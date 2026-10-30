@@ -1,9 +1,9 @@
-scenario,method,mean_pairwise_top5_jaccard,description
-IID,FedAvg,0.7999999999999999,Explicacoes sobre dados locais de treino; analise descritiva
-IID,FedProx,0.7999999999999999,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedAvg,0.073015873015873,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedProx,0.08042328042328042,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedAvg,0.20833333333333334,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedProx,0.23055555555555557,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedAvg,0.30158730158730157,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedProx,0.31746031746031744,Explicacoes sobre dados locais de treino; analise descritiva
+scenario,method,mean_pairwise_top5_jaccard,std_pairwise_top5_jaccard,description
+IID,FedAvg,0.7999999999999999,0.16903085094570336,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+IID,FedProx,0.7999999999999999,0.16903085094570336,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedAvg,0.17486772486772487,0.24108789435787203,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedProx,0.158994708994709,0.2125436593649841,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedAvg,0.1312169312169312,0.2830225094806346,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedProx,0.1312169312169312,0.2830225094806346,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Participantes naturais,FedAvg,0.30158730158730157,0.1750406804800338,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Participantes naturais,FedProx,0.31746031746031744,0.19681899631170227,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)

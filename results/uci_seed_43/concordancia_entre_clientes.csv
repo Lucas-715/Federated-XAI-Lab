@@ -1,9 +1,9 @@
-scenario,method,mean_pairwise_top5_jaccard,description
-IID,FedAvg,0.4,Explicacoes sobre dados locais de treino; analise descritiva
-IID,FedProx,0.4074074074074074,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedAvg,0.13756613756613756,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedProx,0.13756613756613756,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedAvg,0.22486772486772483,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedProx,0.21296296296296294,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedAvg,0.34656084656084657,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedProx,0.3544973544973545,Explicacoes sobre dados locais de treino; analise descritiva
+scenario,method,mean_pairwise_top5_jaccard,std_pairwise_top5_jaccard,description
+IID,FedAvg,0.4,0.50709255283711,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+IID,FedProx,0.4074074074074074,0.5016140907721198,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedAvg,0.46349206349206357,0.38789033724007593,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedProx,0.46349206349206357,0.38789033724007593,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedAvg,0.1796296296296296,0.3251079502354417,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedProx,0.15714285714285714,0.2830874139996594,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Participantes naturais,FedAvg,0.34656084656084657,0.17016405704029866,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Participantes naturais,FedProx,0.3544973544973545,0.14723594824703046,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)

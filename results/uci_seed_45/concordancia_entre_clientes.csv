@@ -1,9 +1,9 @@
-scenario,method,mean_pairwise_top5_jaccard,description
-IID,FedAvg,0.6222222222222222,Explicacoes sobre dados locais de treino; analise descritiva
-IID,FedProx,0.6222222222222222,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedAvg,0.19444444444444445,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID moderado,FedProx,0.19444444444444445,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedAvg,0.14603174603174604,Explicacoes sobre dados locais de treino; analise descritiva
-Nao-IID severo,FedProx,0.16269841269841268,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedAvg,0.5365079365079366,Explicacoes sobre dados locais de treino; analise descritiva
-Participantes naturais,FedProx,0.5365079365079366,Explicacoes sobre dados locais de treino; analise descritiva
+scenario,method,mean_pairwise_top5_jaccard,std_pairwise_top5_jaccard,description
+IID,FedAvg,0.6222222222222222,0.22369128926924212,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+IID,FedProx,0.6222222222222222,0.22369128926924212,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedAvg,0.14232804232804233,0.21468880929953096,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID moderado,FedProx,0.12116402116402115,0.19957069486549664,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedAvg,0.10793650793650794,0.17181865419625775,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Nao-IID severo,FedProx,0.1171957671957672,0.1757004448443205,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Participantes naturais,FedAvg,0.5365079365079366,0.2520352314846339,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)
+Participantes naturais,FedProx,0.5365079365079366,0.2520352314846339,Explicacoes sobre dados locais de treino (condicionadas a amostragem local)

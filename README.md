@@ -43,25 +43,29 @@ Federated-XAI-Lab/
 │       ├── test_ucihar_io.py     # Testes de parser e layout do UCI HAR
 │       └── test_partitioning.py  # Testes de disjuncao, integridade e cobertura federada
 ├── scripts/
-│       ├── analisar_cenarios.py  # Analise estatistica e visual da heterogeneidade (TVD, Entropia)
-│       ├── analisar_experimentos_reais.py  # Consolidacao multissemente e testes pareados
+│       ├── analisar_cenarios.py           # Analise estatistica e visual da heterogeneidade (TVD, Entropia)
+│       ├── analisar_experimentos_reais.py   # Consolidacao multissemente e testes pareados
+│       ├── recalcular_xai_checkpoints.py   # Recalculo de XAI controlado sobre os 60 checkpoints
 │       └── consolidar_execucoes.py
 ├── results/
-│       ├── uci_seed_42/          # Execucao completa semente 42
-│       ├── uci_seed_43/          # Execucao completa semente 43
-│       ├── uci_seed_44/          # Execucao completa semente 44
-│       ├── uci_seed_45/          # Execucao completa semente 45
-│       ├── uci_seed_46/          # Execucao completa semente 46
+│       ├── uci_seed_42/                   # Execucao completa semente 42 (checkpoints, XAI, metricas)
+│       ├── uci_seed_43/                   # Execucao completa semente 43
+│       ├── uci_seed_44/                   # Execucao completa semente 44
+│       ├── uci_seed_45/                   # Execucao completa semente 45
+│       ├── uci_seed_46/                   # Execucao completa semente 46
 │       ├── resumo_experimentos_reais.csv  # Medias e desvios-padrao consolidados (N=5)
+│       ├── resumo_concordancia_top5_real.csv # Concordancia Top-5 (classe prevista e controlada)
+│       ├── resumo_concordancia_entre_clientes_real.csv # Jaccard inter-clientes
 │       ├── teste_estatistico_pareado.json # Testes t pareados e Wilcoxon
 │       └── fig_resumo_macro_f1_real.png   # Grafico publicavel com barras de erro
 ├── docs/
 │       ├── RELATORIO_AUDITORIA.md         # Relatorio formal de auditoria
 │       ├── DATASET.md                     # Documentacao detalhada e proveniencia do dataset
 │       └── RELATORIO_EXPERIMENTAL_UCI_HAR.md  # Relatorio cientifico completo
-├── app.py                        # Dashboard cientifico interativo em Streamlit
-├── requirements.txt              # Dependencias de producao
-├── pyproject.toml                # Metadados e build do pacote
+├── app.py                                 # Dashboard cientifico interativo em Streamlit
+├── requirements.txt                       # Dependencias de producao
+├── pyproject.toml                         # Metadados e build do pacote
+├── LICENSE                                # Licenca MIT oficial
 └── README.md
 ```
 
@@ -96,20 +100,17 @@ pip install pytest
 Para reproduzir os experimentos com o dataset oficial da UCI nas 5 sementes independentes (42 a 46):
 
 ```bash
-# Semente 42
+# Semente 42 (120 amostras estratificadas: 20 por classe, cobrindo todos os 9 sujeitos de teste)
 python -m flxai.experiment --mode uci --dataset-path "data/UCI HAR Dataset" --output-dir results/uci_seed_42 --rounds 15 --clients 6 --lr 0.07 --mu 0.3 --xai-samples 120 --ig-steps 16 --client-xai-samples 25 --client-ig-steps 12 --include-natural --seed 42
 
-# Semente 43
-python -m flxai.experiment --mode uci --dataset-path "data/UCI HAR Dataset" --output-dir results/uci_seed_43 --rounds 15 --clients 6 --lr 0.07 --mu 0.3 --xai-samples 120 --ig-steps 16 --client-xai-samples 25 --client-ig-steps 12 --include-natural --seed 43
+# Sementes 43 a 46 seguem a mesma sintaxe com --seed correspondente.
+```
 
-# Semente 44
-python -m flxai.experiment --mode uci --dataset-path "data/UCI HAR Dataset" --output-dir results/uci_seed_44 --rounds 15 --clients 6 --lr 0.07 --mu 0.3 --xai-samples 120 --ig-steps 16 --client-xai-samples 25 --client-ig-steps 12 --include-natural --seed 44
+### Recalcular XAI sobre Checkpoints Existentes
+Para recalcular Integrated Gradients diretamente sobre os 60 checkpoints `.pt` salvos (avaliando tanto classe prevista quanto classe verdadeira controlada):
 
-# Semente 45
-python -m flxai.experiment --mode uci --dataset-path "data/UCI HAR Dataset" --output-dir results/uci_seed_45 --rounds 15 --clients 6 --lr 0.07 --mu 0.3 --xai-samples 120 --ig-steps 16 --client-xai-samples 25 --client-ig-steps 12 --include-natural --seed 45
-
-# Semente 46
-python -m flxai.experiment --mode uci --dataset-path "data/UCI HAR Dataset" --output-dir results/uci_seed_46 --rounds 15 --clients 6 --lr 0.07 --mu 0.3 --xai-samples 120 --ig-steps 16 --client-xai-samples 25 --client-ig-steps 12 --include-natural --seed 46
+```bash
+python scripts/recalcular_xai_checkpoints.py
 ```
 
 ### Consolidação Estatística Multissemente
@@ -133,8 +134,13 @@ python scripts/analisar_experimentos_reais.py
 | **Participantes naturais** | 0,8955 $\pm$ 0,0728 | **0,9270 $\pm$ 0,0089** | 0,9233 $\pm$ 0,0109 | $p_t = 0,018$ (Tendência empírica; não-sig. pós-Bonferroni $\alpha_{corr}=0,0125$) |
 
 ### Síntese de Explicabilidade (Integrated Gradients)
-- **Concordância Global FedAvg vs. FedProx:** O índice de Jaccard Top-5 entre as características mais importantes dos modelos globais foi de **$1,000$ em IID**, **$0,867$ em Moderado** e **$0,933$ em Severo**, atestando convergência na hierarquia de atributos globais.
-- **Concordância Inter-Clientes (Sobre Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607**. Sob heterogeneidade severa, a concordância desaba para **0,157** (queda de 74%), comprovando que explicações locais em dados de treino refletem a especialização da amostra local e não o modelo global.
+- **Amostragem Estratificada Rigorosa:** 120 instâncias de teste selecionadas exatamente com 20 amostras por classe de atividade (Walking, Walking Upstairs, Walking Downstairs, Sitting, Standing, Laying), com todos os 9 sujeitos de teste representados (`amostragem_xai.json`).
+- **Concordância Top-5 Controlada pela Classe Verdadeira:**
+  - FedProx vs. FedAvg: Jaccard Top-5 de **$0,933$ em IID**, **$1,000$ em Não-IID Moderado**, **$0,867$ em Não-IID Severo** e **$0,933$ em Natural**.
+  - FedAvg vs. Centralizado: Jaccard Top-5 de **$0,689$ em IID**, **$0,463$ em Moderado**, **$0,425$ em Severo** e **$0,752$ em Natural**.
+  - O controle da classe verdadeira revelou que a divergência observada na classe prevista decorria primariamente de instâncias limítrofes mal classificadas, e não de inconsistência intrínseca nas representações dos modelos globais.
+- **Desambiguação de Atributos:** Todas as 561 posições de características possuem identificadores posicionalmente únicos (`idx 0` a `idx 560`), eliminando qualquer risco de colisão entre os 42 nomes triplicados do UCI HAR.
+- **Concordância Inter-Clientes (Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607**. Sob heterogeneidade severa, a concordância desaba para **0,148** (queda de 76%), comprovando que explicações locais em dados de treino refletem a especialização da amostra local e não o modelo global.
 - **Validação Axiomática:** Verificação quantitativa do Axioma da Completude ($\sum IG_i \approx F(x) - F(0)$) comprovou erro relativo de apenas **0,607%** a 16 passos e **0,171%** a 64 passos sobre modelos treinados.
 
 ---
@@ -151,20 +157,19 @@ streamlit run app.py
 
 ## 7. Testes Automatizados
 
-O repositório possui suite completa de testes automatizados:
+O repositório possui suite completa de 23 testes automatizados (testes unitários, axiomáticos, de particionamento e de conformidade do UCI HAR). Na ausência do dataset bruto no diretório local, os testes que dependem do arquivo bruto efetuam `skip` gracioso.
+
 ```bash
-pytest -q
+pytest -v tests
 ```
 Saída esperada:
 ```text
-.....................                                                    [100%]
-21 passed in 30.10s
+============================== 23 passed in ~30s ==============================
 ```
-
 
 ---
 
 ## 8. Licença e Créditos
 
-Este projeto é disponibilizado sob a Licença MIT.  
+Este projeto é disponibilizado sob a [Licença MIT](LICENSE).  
 A base **UCI Human Activity Recognition Using Smartphones** é de domínio público acadêmico disponibilizada pela Universidade da Califórnia, Irvine (UCI) e Autores (Anguita et al., 2013).

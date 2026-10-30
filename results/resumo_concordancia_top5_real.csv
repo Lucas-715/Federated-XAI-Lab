@@ -1,9 +1,17 @@
-scenario,comparison,jaccard_top5_medio,jaccard_top5_dp
-IID,FedAvg vs Centralizado,0.6690476190476191,0.3363384943274259
-IID,FedProx vs FedAvg,1.0,0.0
-Nao-IID moderado,FedAvg vs Centralizado,0.4404761904761905,0.1482130904522468
-Nao-IID moderado,FedProx vs FedAvg,0.8666666666666666,0.18257418583505539
-Nao-IID severo,FedAvg vs Centralizado,0.4912698412698413,0.35221914632018164
-Nao-IID severo,FedProx vs FedAvg,0.9333333333333332,0.14907119849998599
-Participantes naturais,FedAvg vs Centralizado,0.6666666666666666,0.0
-Participantes naturais,FedProx vs FedAvg,0.8,0.18257418583505539
+scenario,comparison,target_type,jaccard_top5_medio,jaccard_top5_dp
+IID,FedAvg vs Centralizado,ground_truth,0.6888888888888889,0.3634539385288028
+IID,FedAvg vs Centralizado,predicted,0.46349206349206346,0.38035667709934967
+IID,FedProx vs FedAvg,ground_truth,0.9333333333333332,0.14907119849998599
+IID,FedProx vs FedAvg,predicted,0.9333333333333332,0.14907119849998599
+Nao-IID moderado,FedAvg vs Centralizado,ground_truth,0.46349206349206346,0.38035667709934967
+Nao-IID moderado,FedAvg vs Centralizado,predicted,0.3333333333333333,0.3042903097250923
+Nao-IID moderado,FedProx vs FedAvg,ground_truth,1.0,0.0
+Nao-IID moderado,FedProx vs FedAvg,predicted,1.0,0.0
+Nao-IID severo,FedAvg vs Centralizado,ground_truth,0.4246031746031746,0.24797618730107923
+Nao-IID severo,FedAvg vs Centralizado,predicted,0.319047619047619,0.24706324986348452
+Nao-IID severo,FedProx vs FedAvg,ground_truth,0.8666666666666666,0.18257418583505539
+Nao-IID severo,FedProx vs FedAvg,predicted,0.8666666666666666,0.18257418583505536
+Participantes naturais,FedAvg vs Centralizado,ground_truth,0.7523809523809524,0.24605734633835838
+Participantes naturais,FedAvg vs Centralizado,predicted,0.5388888888888889,0.35767596895155274
+Participantes naturais,FedProx vs FedAvg,ground_truth,0.9333333333333333,0.149071198499986
+Participantes naturais,FedProx vs FedAvg,predicted,1.0,0.0

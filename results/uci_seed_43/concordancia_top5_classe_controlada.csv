@@ -1,0 +1,9 @@
+scenario,comparison,jaccard_top5
+IID,FedAvg vs Centralizado,1.0
+IID,FedProx vs FedAvg,1.0
+Nao-IID moderado,FedAvg vs Centralizado,1.0
+Nao-IID moderado,FedProx vs FedAvg,1.0
+Nao-IID severo,FedAvg vs Centralizado,0.42857142857142855
+Nao-IID severo,FedProx vs FedAvg,0.6666666666666666
+Participantes naturais,FedAvg vs Centralizado,1.0
+Participantes naturais,FedProx vs FedAvg,1.0

@@ -4,7 +4,8 @@
     32
   ],
   "samples_evaluated": 20,
-  "mean_absolute_difference": 0.00019870148389600217,
-  "relative_difference": 0.0075749801471829414,
-  "assessment": "Aproximacao adequada com 16 passos"
+  "mean_absolute_difference_16_vs_32": 0.0001035490568028763,
+  "relative_difference_16_vs_32": 0.003421155270189047,
+  "completeness_axiom_relative_error_16_steps": 0.0022918619215488434,
+  "assessment": "Aproximação estável e axioma da completude satisfeito (< 1% erro)"
 }
