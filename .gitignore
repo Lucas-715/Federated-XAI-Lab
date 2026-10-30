@@ -18,3 +18,18 @@ data/UCI HAR Dataset/
 .idea/
 .vscode/
 *.swp
+
+# Federated XAI Lab - protecao de dados e temporarios
+*.egg-info/
+build/
+dist/
+data/
+human+activity+recognition+using+smartphones/
+results/test_pipeline/
+.env
+.env.*
+*.pem
+*.key
+*secret*
+*credentials*
+*token*
