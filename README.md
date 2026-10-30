@@ -76,8 +76,8 @@ Federated-XAI-Lab/
 Requer **Python 3.10 ou superior**.
 
 ```bash
-# 1. Clonar o repositorio e entrar no diretorio
-git clone https://github.com/usuario/Federated-XAI-Lab.git
+# 1. Clonar o repositório e entrar no diretório
+git clone https://github.com/SEU-USUARIO/Federated-XAI-Lab.git
 cd Federated-XAI-Lab
 
 # 2. Criar e ativar o ambiente virtual
@@ -87,10 +87,14 @@ python -m venv .venv
 # Linux/macOS:
 source .venv/bin/activate
 
-# 3. Instalar dependencias e pacote em modo editavel
+# 3. Instalar dependências e pacote em modo editável
 pip install -r requirements.txt
 pip install -e .
 pip install pytest
+
+# 4. Obter o dataset oficial UCI HAR (não incluído no ZIP por restrição de tamanho):
+python scripts/download_ucihar.py
+# (O script baixa e descompacta automaticamente os dados oficiais em data/UCI HAR Dataset)
 ```
 
 ---
@@ -141,7 +145,8 @@ python scripts/analisar_experimentos_reais.py
   - O controle da classe verdadeira revelou que divergências de classificação em instâncias limítrofes constituíam um fator de confusão relevante nas comparações puramente descritivas, embora coexistam com variações estocásticas nas representações dos modelos.
 - **Desambiguação de Atributos:** Todas as 561 posições de características possuem identificadores posicionalmente únicos (`idx 0` a `idx 560`), eliminando qualquer risco de colisão entre os 42 nomes triplicados do UCI HAR (como `tGravityAcc-energy()-X`, identificado exclusivamente como `idx 56`).
 - **Concordância Inter-Clientes (Dados Locais de Treino):** Em cenário IID, a concordância média entre pares de clientes locais foi de **0,607 $\pm$ 0,177**. Sob heterogeneidade, a concordância média recua para **0,159 $\pm$ 0,084** (Moderado) e **0,157 $\pm$ 0,070** (Severo), refletindo empiricamente a especialização dos dados de treino em subconjuntos restritos de classes combinada com a forte assimetria no volume amostral entre clientes no particionamento Dirichlet severo (e.g. de 11 a 2.572 amostras na semente 43, onde a amostragem de até 25 instâncias locais amplia a variância nos clientes menores).
-- **Validação Axiomática Multi-Passo:** Verificação quantitativa do Axioma da Completude ($\sum IG_i \approx F(x) - F(0)$) avaliando o conjunto completo das 120 amostras de teste estratificadas (todas as 6 classes de atividade representadas). O erro relativo médio de completude situou-se confortavelmente abaixo de 1% em todas as cinco sementes já a partir de 16 passos (média geral de **0,557%** a 16 passos, **0,382%** a 32 passos e **0,238%** a 64 passos, com 100% das sementes mantendo média abaixo do limiar de 1% em todas as escalas avaliadas).
+- **Validação Axiomática Multi-Passo:** Verificação quantitativa do Axioma da Completude ($\sum IG_i \approx F(x) - F(0)$) avaliando o conjunto completo das 120 amostras de teste estratificadas (todas as 6 classes de atividade representadas). O erro relativo médio de completude situou-se confortavelmente abaixo de 1% em todas as cinco sementes já a partir de 16 passos (média geral de **0,557%** a 16 passos, **0,382%** a 32 passos e **0,238%** a 64 passos, com 100% das sementes mantendo média abaixo do limiar de 1% em todas as escalas avaliadas). O limiar aplica-se à média amostral, ocorrendo flutuações locais em instâncias isoladas limítrofes devido a descontinuidades de derivada em redes ReLU.
+- **Estabilidade dos Rankings Top-5:** A comparação pareada de Jaccard Top-5 entre os rankings de explicabilidade gerados com 16, 32 e 64 passos comprovou concordância perfeita (**$J = 1,000 \pm 0,000$**) em 100% das cinco sementes e em todos os quatro cenários experimentais, demonstrando que o subconjunto de características mais importantes é empiricamente invariante à resolução de passos adotada.
 
 ---
 

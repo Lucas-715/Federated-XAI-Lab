@@ -196,7 +196,25 @@ Todas as 561 características do UCI HAR foram mapeadas com identificadores posi
 | **Média Geral** | **0,557%** (máx: 6,944%) | **0,382%** (máx: 3,204%) | **0,238%** (máx: 1,732%) | **5/5 Atendidos (100%)** | **5/5 Atendidos (100%)** | **5/5 Atendidos (100%)** |
 
 *Avaliação do Axioma da Completude:*
-Ao avaliar a amostra estratificada integral (120 instâncias abrangendo todas as 6 classes de atividade e todos os 9 voluntários de teste), o erro relativo médio de completude situou-se confortavelmente abaixo de 1% em todas as cinco sementes já a partir de 16 passos (média geral de **0,557%**). Com o aumento dos passos de integração para 32 e 64, a média geral do erro decresce progressivamente para **0,382%** e **0,238%**, respectivamente, com 100% das sementes mantendo média inferior a 0,55% a 32 passos e inferior a 0,38% a 64 passos. No nível de instâncias individuais, aproximações por somas de Riemann em redes neurais com ativações lineares por partes (ReLU) podem apresentar flutuações locais em pontos de descontinuidade da derivada (com erros máximos isolados de até 6,94% a 16 passos na semente 42, que se atenuam para 1,73% a 64 passos, situando-se abaixo de 0,90% em todas as demais sementes). Esses resultados confirmam que a aproximação de Riemann empregada é consistente com o axioma da completude para fins de determinação do ranking de importância de atributos.
+A aproximação de Integrated Gradients apresentou erro relativo médio inferior a 1% nas cinco sementes e nos três números de passos avaliados (média geral de **0,557%** a 16 passos, **0,382%** a 32 passos e **0,238%** a 64 passos). Entretanto, é fundamental ressaltar que o atendimento ao limiar refere-se à **média amostral do erro**: em observações individuais limítrofes, redes neurais com ativações lineares por partes (ReLU) podem apresentar flutuações locais em pontos de descontinuidade da derivada (com erros máximos isolados atingindo 6,94% a 16 passos na semente 42, os quais se reduzem progressivamente para 3,20% a 32 passos e 1,73% a 64 passos, situando-se abaixo de 0,90% em todas as demais sementes a 64 passos).
+
+4. **Estabilidade dos Rankings Top-5 em Relação ao Número de Passos (Invariância Numérica):**
+Para demonstrar se as conclusões científicas sobre atributos relevantes são robustas à resolução da integração de Riemann, recalculou-se o índice de Jaccard Top-5 entre os rankings gerados com 16, 32 e 64 passos sobre as 120 amostras de teste:
+
+| Comparação de Resolução | Semente 42 | Semente 43 | Semente 44 | Semente 45 | Semente 46 | Média Geral Jaccard |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **16 passos vs. 32 passos** | 1,000 | 1,000 | 1,000 | 1,000 | 1,000 | **1,000 $\pm$ 0,000** |
+| **32 passos vs. 64 passos** | 1,000 | 1,000 | 1,000 | 1,000 | 1,000 | **1,000 $\pm$ 0,000** |
+| **16 passos vs. 64 passos** | 1,000 | 1,000 | 1,000 | 1,000 | 1,000 | **1,000 $\pm$ 0,000** |
+
+*Resultado Científico:* Em **100% das sementes** e em **todos os 4 cenários de distribuição de dados**, o subconjunto de 5 características mais determinantes selecionadas pelo modelo global permaneceu **estritamente idêntico ($J = 1,000$)** entre 16, 32 e 64 passos. Isso comprova empiricamente que as flutuações residuais de completude não alteram a ordenação das principais características, validando a adoção de 16 passos como uma escolha analiticamente confiável e computacionalmente eficiente.
+
+5. **Generalização da Completude para Demais Checkpoints e Métodos:**
+A auditoria estendida aos 12 checkpoints da semente 42 (abrangendo Centralizado, FedAvg e FedProx nos cenários IID, Não-IID moderado, Não-IID severo e Participantes naturais) confirmou que a precisão média da aproximação de Riemann é consistente em toda a grade experimental:
+- **Modelos Centralizados:** erro relativo médio de **0,675%** a 16 passos e **0,437%** a 32 passos.
+- **Modelos FedAvg:** erro relativo médio variando entre **0,565% e 0,905%** a 16 passos, reduzindo-se para **0,349% a 0,641%** a 32 passos.
+- **Modelos FedProx:** erro relativo médio variando entre **0,572% e 0,920%** a 16 passos, reduzindo-se para **0,373% a 0,663%** a 32 passos.
+- Em 100% dos modelos avaliados, o erro relativo médio cumpriu o limiar de 1% já a 16 passos, decrescendo progressivamente a 32 passos.
 
 ---
 
