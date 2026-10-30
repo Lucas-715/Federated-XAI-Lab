@@ -1,0 +1,17 @@
+{
+  "mode": "uci",
+  "dataset_path": "data/UCI HAR Dataset",
+  "output_dir": "results/uci_seed_45",
+  "seed": 45,
+  "clients": 6,
+  "rounds": 15,
+  "local_epochs": 1,
+  "lr": 0.07,
+  "batch_size": 64,
+  "mu": 0.3,
+  "xai_samples": 120,
+  "ig_steps": 16,
+  "client_xai_samples": 25,
+  "client_ig_steps": 12,
+  "include_natural": true
+}

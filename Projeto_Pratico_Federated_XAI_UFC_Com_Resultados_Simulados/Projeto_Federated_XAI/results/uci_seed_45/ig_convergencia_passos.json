@@ -1,0 +1,10 @@
+{
+  "steps_tested": [
+    16,
+    32
+  ],
+  "samples_evaluated": 20,
+  "mean_absolute_difference": 0.00016417971346527338,
+  "relative_difference": 0.008124511688947678,
+  "assessment": "Aproximacao adequada com 16 passos"
+}

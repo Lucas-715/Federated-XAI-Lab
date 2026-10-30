@@ -1,0 +1,17 @@
+{
+  "mode": "uci",
+  "n_train": 5636,
+  "n_val": 1716,
+  "n_test": 2947,
+  "n_features": 561,
+  "classes": [
+    "WALKING",
+    "WALKING_UPSTAIRS",
+    "WALKING_DOWNSTAIRS",
+    "SITTING",
+    "STANDING",
+    "LAYING"
+  ],
+  "preprocessing": "StandardScaler ajustado exclusivamente no treino agregado: benchmark offline",
+  "warning": "UCI HAR real; particionamento de clientes simulado"
+}

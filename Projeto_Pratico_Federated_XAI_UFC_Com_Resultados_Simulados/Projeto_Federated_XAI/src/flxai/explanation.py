@@ -5,7 +5,7 @@ Referencial: Sundararajan, Taly & Yan (2017). Nao produz valores SHAP.
 import numpy as np
 import torch
 
-def integrated_gradients(model, inputs, steps=20, baseline=None):
+def integrated_gradients(model, inputs, steps=20, baseline=None, target_class=None):
     model.eval()
     tensor=torch.tensor(np.asarray(inputs),dtype=torch.float32)
     if tensor.ndim == 1:
@@ -13,7 +13,15 @@ def integrated_gradients(model, inputs, steps=20, baseline=None):
     base=torch.zeros_like(tensor) if baseline is None else torch.as_tensor(baseline,dtype=torch.float32)
     assert base.shape==tensor.shape
     with torch.no_grad():
-        labels=model(tensor).argmax(dim=1)
+        preds=model(tensor).argmax(dim=1)
+    if target_class is None:
+        labels = preds
+    elif isinstance(target_class, int):
+        labels = torch.full((len(tensor),), target_class, dtype=torch.long)
+    else:
+        labels = torch.as_tensor(target_class, dtype=torch.long)
+        if labels.ndim == 0:
+            labels = labels.unsqueeze(0)
     # Media de gradientes em pontos entre baseline e entrada (aproximacao de Riemann).
     total=torch.zeros_like(tensor)
     for alpha in torch.linspace(0.,1.,steps+1)[1:]:
@@ -21,12 +29,13 @@ def integrated_gradients(model, inputs, steps=20, baseline=None):
         logits=model(interpolated).gather(1,labels[:,None]).sum()
         grad=torch.autograd.grad(logits,interpolated)[0]
         total+=grad.detach()
-    return ((tensor-base)*(total/steps)).numpy(),labels.numpy()
+    return ((tensor-base)*(total/steps)).numpy(), labels.numpy()
 
 
-def summarize_explanations(model,X,feature_names,max_samples=60,steps=20):
+def summarize_explanations(model,X,feature_names,max_samples=60,steps=20,target_class=None):
     subset=np.asarray(X[:max_samples],dtype=np.float32)
-    ig,classes=integrated_gradients(model,subset,steps=steps)
+    targets = target_class[:max_samples] if target_class is not None and not isinstance(target_class, int) else target_class
+    ig,classes=integrated_gradients(model,subset,steps=steps,target_class=targets)
     ranking=np.mean(np.abs(ig),axis=0)
     order=np.argsort(ranking)[::-1]
     table=[{'feature':str(feature_names[i]),'mean_abs_attribution':float(ranking[i]),

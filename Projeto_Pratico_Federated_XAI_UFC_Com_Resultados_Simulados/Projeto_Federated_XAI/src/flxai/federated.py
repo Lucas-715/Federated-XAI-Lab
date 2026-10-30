@@ -3,7 +3,8 @@ import copy
 import numpy as np
 import torch
 from torch.nn import functional as F
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
+import time
 from .models import new_model
 
 
@@ -38,16 +39,36 @@ def weighted_average(models, weights):
     return merged
 
 
-def evaluate(model, X, y):
+def evaluate(model, X, y, detailed=False):
     model.eval()
+    t_x = torch.tensor(X, dtype=torch.float32)
+    t_y = torch.tensor(y, dtype=torch.long)
     with torch.no_grad():
-        pred=model(torch.tensor(X,dtype=torch.float32)).argmax(1).numpy()
-    return {'accuracy':float(accuracy_score(y,pred)),
-            'macro_f1':float(f1_score(y,pred,average='macro',zero_division=0))}
+        logits = model(t_x)
+        loss = float(F.cross_entropy(logits, t_y).item())
+        pred = logits.argmax(1).numpy()
+    
+    acc = float(accuracy_score(y, pred))
+    f1 = float(f1_score(y, pred, average='macro', zero_division=0))
+    res = {'accuracy': acc, 'macro_f1': f1, 'loss': loss}
+    
+    if detailed:
+        prec_per_class = precision_score(y, pred, average=None, zero_division=0).tolist()
+        rec_per_class = recall_score(y, pred, average=None, zero_division=0).tolist()
+        f1_per_class = f1_score(y, pred, average=None, zero_division=0).tolist()
+        cm = confusion_matrix(y, pred).tolist()
+        res.update({
+            'precision_per_class': prec_per_class,
+            'recall_per_class': rec_per_class,
+            'f1_per_class': f1_per_class,
+            'confusion_matrix': cm
+        })
+    return res
 
 
 def train_federated(data, partitions, method, rounds=4, epochs=1, lr=.035,
                     batch_size=64, mu=.1, seed=42):
+    start_time = time.time()
     model=new_model(data.X_train.shape[1],len(data.label_names),seed)
     history=[]
     for iteration in range(rounds):
@@ -60,10 +81,12 @@ def train_federated(data, partitions, method, rounds=4, epochs=1, lr=.035,
         model=weighted_average(local_models,sizes)
         validation=evaluate(model,data.X_val,data.y_val)
         history.append({'round':iteration+1,**validation})
+    model.training_duration_seconds = float(time.time() - start_time)
     return model, history
 
 
 def train_centralized(data, rounds=4, epochs=1, lr=.035, batch_size=64,seed=42):
+    start_time = time.time()
     model=new_model(data.X_train.shape[1],len(data.label_names),seed)
     history=[]
     # Quantidade de epocas igual a rounds*epochs, sem pretensao de equivalencia de FLOPs.
@@ -71,4 +94,5 @@ def train_centralized(data, rounds=4, epochs=1, lr=.035, batch_size=64,seed=42):
     for iteration in range(rounds):
         model=local_update(model,x,y,epochs=epochs,lr=lr,batch_size=batch_size,seed=seed+iteration*101)
         history.append({'round':iteration+1,**evaluate(model,data.X_val,data.y_val)})
+    model.training_duration_seconds = float(time.time() - start_time)
     return model,history

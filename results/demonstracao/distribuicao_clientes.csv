@@ -1,0 +1,73 @@
+scenario,client,class,count
+IID,1,parado,51
+IID,1,caminhando,31
+IID,1,correndo,47
+IID,1,subindo_escadas,43
+IID,2,parado,41
+IID,2,caminhando,28
+IID,2,correndo,53
+IID,2,subindo_escadas,45
+IID,3,parado,47
+IID,3,caminhando,34
+IID,3,correndo,47
+IID,3,subindo_escadas,35
+IID,4,parado,47
+IID,4,caminhando,31
+IID,4,correndo,55
+IID,4,subindo_escadas,46
+IID,5,parado,56
+IID,5,caminhando,37
+IID,5,correndo,48
+IID,5,subindo_escadas,37
+IID,6,parado,54
+IID,6,caminhando,38
+IID,6,correndo,55
+IID,6,subindo_escadas,44
+Nao-IID moderado,1,parado,71
+Nao-IID moderado,1,caminhando,37
+Nao-IID moderado,1,correndo,78
+Nao-IID moderado,1,subindo_escadas,0
+Nao-IID moderado,2,parado,92
+Nao-IID moderado,2,caminhando,41
+Nao-IID moderado,2,correndo,4
+Nao-IID moderado,2,subindo_escadas,124
+Nao-IID moderado,3,parado,37
+Nao-IID moderado,3,caminhando,0
+Nao-IID moderado,3,correndo,24
+Nao-IID moderado,3,subindo_escadas,2
+Nao-IID moderado,4,parado,85
+Nao-IID moderado,4,caminhando,108
+Nao-IID moderado,4,correndo,70
+Nao-IID moderado,4,subindo_escadas,77
+Nao-IID moderado,5,parado,5
+Nao-IID moderado,5,caminhando,10
+Nao-IID moderado,5,correndo,111
+Nao-IID moderado,5,subindo_escadas,24
+Nao-IID moderado,6,parado,6
+Nao-IID moderado,6,caminhando,3
+Nao-IID moderado,6,correndo,18
+Nao-IID moderado,6,subindo_escadas,23
+Nao-IID severo,1,parado,1
+Nao-IID severo,1,caminhando,1
+Nao-IID severo,1,correndo,284
+Nao-IID severo,1,subindo_escadas,1
+Nao-IID severo,2,parado,0
+Nao-IID severo,2,caminhando,0
+Nao-IID severo,2,correndo,0
+Nao-IID severo,2,subindo_escadas,116
+Nao-IID severo,3,parado,129
+Nao-IID severo,3,caminhando,184
+Nao-IID severo,3,correndo,0
+Nao-IID severo,3,subindo_escadas,125
+Nao-IID severo,4,parado,77
+Nao-IID severo,4,caminhando,11
+Nao-IID severo,4,correndo,0
+Nao-IID severo,4,subindo_escadas,0
+Nao-IID severo,5,parado,87
+Nao-IID severo,5,caminhando,0
+Nao-IID severo,5,correndo,20
+Nao-IID severo,5,subindo_escadas,0
+Nao-IID severo,6,parado,2
+Nao-IID severo,6,caminhando,3
+Nao-IID severo,6,correndo,1
+Nao-IID severo,6,subindo_escadas,8

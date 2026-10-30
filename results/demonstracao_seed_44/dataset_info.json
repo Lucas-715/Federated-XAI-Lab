@@ -1,0 +1,15 @@
+{
+  "mode": "synthetic",
+  "n_train": 1050,
+  "n_val": 300,
+  "n_test": 450,
+  "n_features": 12,
+  "classes": [
+    "parado",
+    "caminhando",
+    "correndo",
+    "subindo_escadas"
+  ],
+  "preprocessing": "StandardScaler ajustado com treino agregado: benchmark offline, nao protocolo federado privado",
+  "warning": "Dados artificiais: não usar como evidencia sobre desempenho em sensores reais"
+}

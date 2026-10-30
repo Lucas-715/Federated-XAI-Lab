@@ -1,0 +1,17 @@
+{
+  "mode": "synthetic",
+  "dataset_path": "data/UCI HAR Dataset",
+  "output_dir": "results/demonstracao_seed_44",
+  "seed": 44,
+  "clients": 6,
+  "rounds": 15,
+  "local_epochs": 1,
+  "lr": 0.07,
+  "batch_size": 64,
+  "mu": 0.3,
+  "xai_samples": 50,
+  "ig_steps": 16,
+  "client_xai_samples": 15,
+  "client_ig_steps": 10,
+  "include_natural": false
+}

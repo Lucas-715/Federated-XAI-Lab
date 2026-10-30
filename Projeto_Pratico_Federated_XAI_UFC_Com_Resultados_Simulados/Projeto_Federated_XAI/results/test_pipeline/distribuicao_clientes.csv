@@ -1,0 +1,37 @@
+scenario,client,class,count
+IID,1,parado,109
+IID,1,caminhando,64
+IID,1,correndo,96
+IID,1,subindo_escadas,86
+IID,2,parado,87
+IID,2,caminhando,74
+IID,2,correndo,97
+IID,2,subindo_escadas,75
+IID,3,parado,100
+IID,3,caminhando,61
+IID,3,correndo,112
+IID,3,subindo_escadas,89
+Nao-IID moderado,1,parado,105
+Nao-IID moderado,1,caminhando,2
+Nao-IID moderado,1,correndo,56
+Nao-IID moderado,1,subindo_escadas,55
+Nao-IID moderado,2,parado,135
+Nao-IID moderado,2,caminhando,36
+Nao-IID moderado,2,correndo,185
+Nao-IID moderado,2,subindo_escadas,164
+Nao-IID moderado,3,parado,56
+Nao-IID moderado,3,caminhando,161
+Nao-IID moderado,3,correndo,64
+Nao-IID moderado,3,subindo_escadas,31
+Nao-IID severo,1,parado,0
+Nao-IID severo,1,caminhando,198
+Nao-IID severo,1,correndo,304
+Nao-IID severo,1,subindo_escadas,0
+Nao-IID severo,2,parado,284
+Nao-IID severo,2,caminhando,0
+Nao-IID severo,2,correndo,0
+Nao-IID severo,2,subindo_escadas,246
+Nao-IID severo,3,parado,12
+Nao-IID severo,3,caminhando,1
+Nao-IID severo,3,correndo,1
+Nao-IID severo,3,subindo_escadas,4
