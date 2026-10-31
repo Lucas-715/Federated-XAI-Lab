@@ -145,7 +145,7 @@ def inspect_files(root: Path) -> tuple[int, int, bool]:
             if rx.search(rel_posix):
                 forbidden_hits.append(f"{rel_posix} ({reason})")
 
-        if rel_posix.lower().endswith(".pdf"):
+        if rel_posix.lower().endswith((".pdf", ".docx")):
             article_in_git = True
 
         fpath = root / Path(rel_posix)
@@ -156,7 +156,7 @@ def inspect_files(root: Path) -> tuple[int, int, bool]:
         if size > MAX_GITHUB_FILE_BYTES:
             oversized.append(f"{rel_posix} ({size / (1024 * 1024):.1f} MB)")
 
-        if fpath.suffix.lower() not in {".pt", ".png", ".pdf", ".zip"}:
+        if fpath.suffix.lower() not in {".pt", ".png", ".pdf", ".docx", ".zip"}:
             raw = fpath.read_bytes()
             for rule_name, srx in SECRET_PATTERNS:
                 if srx.search(raw):
@@ -273,6 +273,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Publicar o Federated XAI Lab no GitHub de Lucas-715")
     parser.add_argument("--publicar", action="store_true", help="Executa commit e push; sem a flag, somente prévia.")
     parser.add_argument("--raiz", type=Path, help="Caminho da raiz do projeto (padrão: pasta acima de scripts/).")
+    parser.add_argument(
+        "--mensagem",
+        default="docs: preparar publicacao do Federated XAI Lab no GitHub",
+        help="Mensagem do commit quando houver alteracoes pendentes.",
+    )
     args = parser.parse_args()
     root = (args.raiz or Path(__file__).resolve().parent.parent).resolve()
     print("=== FEDERATED XAI LAB — PUBLICAÇÃO NO GITHUB ===")
@@ -325,7 +330,7 @@ def main() -> int:
     check_remote_history(root)
     staged = git(root, "diff", "--cached", "--name-only").stdout.strip()
     if staged:
-        git(root, "commit", "-m", "docs: preparar publicacao do Federated XAI Lab no GitHub")
+        git(root, "commit", "-m", args.mensagem)
         print("[OK] Commit criado.")
     else:
         print("[OK] Nenhuma nova alteração para commit; histórico existente preservado.")

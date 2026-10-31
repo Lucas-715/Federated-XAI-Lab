@@ -3,7 +3,7 @@
 **Artigo Científico:** Explicabilidade Local e Global em Aprendizado Federado Não-IID: Um Estudo com Dados de Sensores Distribuídos  
 **Instituição:** Universidade Federal do Ceará — Campus Russas  
 **Data:** 29 de outubro de 2026  
-**Autores da Implementação:** João Pedro Schontz da Silva, Lucas de Souza Almeida  
+**Autor da Implementação:** Lucas de Souza Almeida (569990)  
 **Docente Responsável:** Pitágoras Graça Martins  
 
 ---
@@ -13,7 +13,7 @@
 - **Dataset:** UCI Human Activity Recognition Using Smartphones (UCI HAR).
 - **Origem e Repositório:** UCI Machine Learning Repository (Anguita et al., 2013).
 - **URL Oficial:** `https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones`
-- **Hash SHA-256 Observado Localmente (`UCI HAR Dataset.zip`):** `2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0` (60.999.314 bytes; hash observado no pacote interno obtido da UCI pelos autores, não confirmado em referência externa independente).
+- **Hash SHA-256 Observado Localmente (`UCI HAR Dataset.zip`):** `2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0` (60.999.314 bytes; hash observado no pacote interno obtido da UCI pelo autor, não confirmado em referência externa independente).
 - **Total de Amostras:** 10.299 registros (7.352 de treinamento oficial e 2.947 de teste oficial).
 - **Participantes:** 30 indivíduos (idades entre 19 e 48 anos).
   - 21 participantes no treinamento oficial (`[1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30]`).

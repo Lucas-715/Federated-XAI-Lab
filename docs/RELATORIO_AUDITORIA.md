@@ -4,6 +4,7 @@
 
 **Projeto:** Explicabilidade Local e Global em Aprendizado Federado Não-IID: Um Estudo com Dados de Sensores Distribuídos  
 **Instituição:** Universidade Federal do Ceará — Campus Russas  
+**Autor:** Lucas de Souza Almeida (569990)  
 **Data da Auditoria:** 29 de outubro de 2026  
 **Ambiente:** Windows 10/11, Python 3.12.10, PyTorch 2.15.0, scikit-learn 1.9.1, NumPy 2.5.4, Pandas 3.1.0, Matplotlib 3.11.2, Streamlit 1.66.1, pytest 9.2.0  
 
@@ -12,7 +13,7 @@
 ## 1. Visão Geral e Estrutura dos Arquivos
 
 A auditoria inspecionou todos os arquivos e diretórios do repositório:
-- `Artigo UFC Aplicacao Prática (1) (1).pdf`: Artigo científico e caderno técnico de 26 páginas definindo a fundamentação teórica, formulações matemáticas, metodologia, resultados com dados sintéticos e especificações técnicas da aplicação.
+- `Artigo_Cientifico_Federated_XAI_Lab_Lucas_Almeida.docx` *(substituiu na versão final o rascunho sintético preliminar da Fase 1)*: Artigo científico completo consolidando fundamentação teórica, formulações matemáticas, metodologia, experimentos reais em 5 sementes no UCI HAR e especificações técnicas da aplicação.
 - `human+activity+recognition+using+smartphones/`: Contém os arquivos oficiais `UCI HAR Dataset.zip` (60.999.314 bytes, hash verificado) e `UCI HAR Dataset.names`.
 - Raiz do pacote Python (unificada na raiz do repositório a partir da Fase 2):
   - `src/flxai/`: Módulos centrais do pacote Python (`__init__.py`, `data.py`, `models.py`, `federated.py`, `explanation.py`, `experiment.py`).

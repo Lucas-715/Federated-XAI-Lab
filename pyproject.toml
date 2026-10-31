@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 name = "federated-xai-lab"
 version = "1.0.0"
 description = "Estudo reproduzivel de aprendizado federado nao-IID e explicabilidade"
+authors = [{ name = "Lucas de Souza Almeida" }]
 requires-python = ">=3.10"
 [tool.setuptools.packages.find]
 where = ["src"]

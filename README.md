@@ -6,7 +6,7 @@
 
 **Trabalho Científico:** *Explicabilidade Local e Global em Aprendizado Federado Não-IID: Um Estudo com Dados de Sensores Distribuídos*  
 **Instituição:** Universidade Federal do Ceará — Campus Russas  
-**Discentes:** João Pedro Schontz da Silva (555036); Lucas de Souza Almeida (569990)  
+**Autor:** Lucas de Souza Almeida (569990)  
 **Docente Responsável:** Pitágoras Graça Martins  
 
 ---
@@ -52,6 +52,8 @@ Federated-XAI-Lab/
 │       ├── analisar_estabilidade_ig.py    # Estabilidade dos rankings Top-5 (16/32/64 passos)
 │       ├── download_ucihar.py             # Download do UCI HAR com verificacao SHA-256 / estrutural
 │       ├── gerar_entregavel_zip.py        # Geracao reprodutivel do pacote ZIP entregavel
+│       ├── publicar_federated_xai_github.py # Publicacao validada no GitHub
+│       ├── organizar_federated_xai.py     # Limpeza controlada com backup e SHA-256
 │       └── consolidar_execucoes.py
 ├── results/
 │       ├── uci_seed_42/                   # Execucao completa semente 42 (checkpoints, XAI, metricas)
@@ -71,6 +73,7 @@ Federated-XAI-Lab/
 │       ├── RELATORIO_AUDITORIA.md         # Relatorio formal de auditoria
 │       ├── DATASET.md                     # Documentacao detalhada e proveniencia do dataset
 │       └── RELATORIO_EXPERIMENTAL_UCI_HAR.md  # Relatorio cientifico completo
+├── Artigo_Cientifico_Federated_XAI_Lab_Lucas_Almeida.docx # Artigo cientifico completo (UCI HAR, 5 sementes)
 ├── app.py                                 # Dashboard cientifico interativo em Streamlit
 ├── requirements.txt                       # Dependencias de producao
 ├── pyproject.toml                         # Metadados e build do pacote
@@ -105,7 +108,7 @@ python scripts/download_ucihar.py
 # (O script baixa e descompacta os dados em data/UCI HAR Dataset.)
 # Dois níveis de verificação:
 #   - Download: compara o SHA-256 do ZIP interno com o hash configurado no script.
-#     Esse hash foi observado no arquivo obtido pelos autores e NÃO foi confirmado
+#     Esse hash foi observado no arquivo obtido pelo autor e NÃO foi confirmado
 #     em uma referência externa independente.
 #   - Dados já extraídos: apenas verificação ESTRUTURAL (8 arquivos essenciais e
 #     tamanho mínimo), sem verificação criptográfica.

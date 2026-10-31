@@ -2,6 +2,7 @@
 
 **Projeto:** Explicabilidade Local e Global em Aprendizado Federado Não-IID: Um Estudo com Dados de Sensores Distribuídos  
 **Instituição:** Universidade Federal do Ceará — Campus Russas  
+**Autor:** Lucas de Souza Almeida (569990)  
 **Data de Validação:** 29 de outubro de 2026  
 
 ---
@@ -13,7 +14,7 @@
 - **URL Oficial:** [https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones](https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones)
 - **Citação:** Anguita, D., Ghio, A., Oneto, L., Parra, X., & Reyes-Ortiz, J. L. (2013). *A public domain dataset for human activity recognition using smartphones*. In European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning (ESANN).
 - **Arquivo Interno de Origem:** `UCI HAR Dataset.zip` (60.999.314 bytes / 58,17 MB)
-- **Hash SHA-256 Observado Localmente:** `2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0` *(observado no arquivo obtido do repositório da UCI pelos autores; não confirmado em fonte externa independente)*
+- **Hash SHA-256 Observado Localmente:** `2045e435c955214b38145fb5fa00776c72814f01b203fec405152dac7d5bfeb0` *(observado no arquivo obtido do repositório da UCI pelo autor; não confirmado em fonte externa independente)*
 - **Diretório Local:** `data/UCI HAR Dataset/`
 
 ---

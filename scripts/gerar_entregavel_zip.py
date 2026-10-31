@@ -13,6 +13,7 @@ def create_deliverable_zip():
         "scripts",
         "results",
         "docs",
+        "Artigo_Cientifico_Federated_XAI_Lab_Lucas_Almeida.docx",
         "app.py",
         "pyproject.toml",
         "requirements.txt",

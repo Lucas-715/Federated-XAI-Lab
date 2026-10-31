@@ -209,7 +209,7 @@ def scan_secrets(root: Path) -> dict[str, object]:
         rel_parts = p.relative_to(root).parts
         if any(part in {".git", ".venv", "venv", "ENV"} for part in rel_parts):
             continue
-        if p.is_file() and p.suffix.lower() not in {".pt", ".zip", ".png", ".pdf"}:
+        if p.is_file() and p.suffix.lower() not in {".pt", ".zip", ".png", ".pdf", ".docx"}:
             wt_files_scanned += 1
             raw = p.read_bytes()
             for rule_name, rx in SECRET_REGEXES.items():
