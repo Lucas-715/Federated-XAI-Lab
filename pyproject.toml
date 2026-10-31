@@ -1,11 +1,42 @@
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
 [project]
 name = "federated-xai-lab"
 version = "1.0.0"
-description = "Estudo reproduzivel de aprendizado federado nao-IID e explicabilidade"
+description = "Aprendizado Federado Nao-IID (FedAvg vs. FedProx) e IA Explicavel (Integrated Gradients) sobre dados de sensores UCI HAR com dashboard Streamlit"
+readme = "README.md"
+license = { file = "LICENSE" }
 authors = [{ name = "Lucas de Souza Almeida" }]
 requires-python = ">=3.10"
+keywords = [
+    "python",
+    "pytorch",
+    "federated-learning",
+    "explainable-ai",
+    "integrated-gradients",
+    "non-iid",
+    "machine-learning",
+    "streamlit",
+    "uci-har",
+    "sensor-data",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/Lucas-715/Federated-XAI-Lab"
+Repository = "https://github.com/Lucas-715/Federated-XAI-Lab.git"
+Documentation = "https://github.com/Lucas-715/Federated-XAI-Lab#readme"
+
 [tool.setuptools.packages.find]
 where = ["src"]
